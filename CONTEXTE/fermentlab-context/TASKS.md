@@ -15,6 +15,29 @@
 
 Aucune.
 
+## Fait (récent — Étape 14 — Consolidation UX timeline)
+
+- [x] `shared/utils/date.ts` : `isoToDatetimeLocal(iso)` ajouté (refactorise `nowDatetimeLocal`).
+- [x] `measurementRepository` / `observationRepository` / `processEventRepository` : méthode `update()` ajoutée.
+- [x] `MeasurementForm` : props `initialMetric`, `defaultTimestamp` ; `onSaved(ts: string)`.
+- [x] `ObservationForm` : prop `defaultTimestamp` ; `onSaved(ts: string)`.
+- [x] `ProcessEventForm` : prop `defaultTimestamp` ; `onSaved(ts: string)`.
+- [x] `BatchTimeline` réécrit :
+  - Groupement par jour (header date localisée).
+  - Timestamps : heure seule (HH:MM) dans chaque groupe.
+  - Badges visuels de phase `[F1]`, `[F2]`, `[FROID]`, `[POUSSE]`, `[REPOS]`, `[APPRET]`, `[BULK]`.
+  - Boutons ✏️ / ✕ par entrée (opacity hover sur desktop, toujours visible sur mobile touch).
+  - Éditeurs inline spécialisés : MeasurementEditor, ObservationEditor, ProcessEventEditor.
+  - Feedback local après modification / suppression.
+- [x] `BatchDetailPage` :
+  - `ActiveForm` : type étendu avec variantes `"temperature"`, `"ph"` en plus de `"measurement"`.
+  - `QuickAddBar` : 5 boutons (`+ Temp.`, `+ pH`, `+ Mesure`, `+ Observation`, `+ Événement`).
+  - `lastTimestamp` : propagé de formulaire en formulaire pour timestamp intelligent.
+  - `savedFeedback` : toast "Enregistré ✓" après sauvegarde.
+  - `key={activeForm}` sur `MeasurementForm` pour reset d'état lors du changement de type.
+- [x] `index.css` : styles timeline-day-group, timeline-day-header, timeline-phase-badge, timeline-actions, timeline-edit-btn, timeline-editor, saved-feedback, timeline-feedback.
+- [x] Build ✓ (459 KB JS, 16.20 KB CSS). Lint ✓.
+
 ## Fait (récent — Étape 13 — Association automatique phaseId)
 
 - [x] `phaseRepository.findActiveByBatch(batchId)` : filtre `endedAt == null`, retourne la phase la plus récente.
@@ -116,4 +139,4 @@ Aucun.
 
 - `lib/dates.ts` : formatage d'affichage des dates (formatDate, formatDateShort) est encore inline dans plusieurs composants. À extraire si un 3e composant en a besoin.
 - ~~Phases absentes de la timeline~~ : ✓ Résolu (Étape 13). `phaseId` assigné automatiquement.
-- Suppression d'entités depuis la timeline : implémentée. Édition (correction de valeur) reste à faire.
+- ~~Suppression et édition d'entités depuis la timeline~~ : ✓ Résolu (Étape 14).

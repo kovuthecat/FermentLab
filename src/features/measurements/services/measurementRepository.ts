@@ -13,6 +13,10 @@ export const measurementRepository = {
     return db.measurements.where("batchId").equals(batchId).sortBy("timestamp");
   },
 
+  async update(id: string, data: Partial<Omit<Measurement, "id" | "createdAt">>): Promise<void> {
+    await db.measurements.update(id, data);
+  },
+
   async remove(id: string): Promise<void> {
     await db.measurements.delete(id);
   },

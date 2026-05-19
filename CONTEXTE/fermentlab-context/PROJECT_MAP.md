@@ -1,7 +1,7 @@
 # PROJECT_MAP.md
 
 > Carte synthétique du projet FermentLab. À maintenir à chaque changement d'arborescence.
-> Dernière mise à jour : 2026-05-19 (consolidation — Étape 12)
+> Dernière mise à jour : 2026-05-19 (UX timeline — Étape 14)
 
 ## Vue d'ensemble
 

@@ -7,7 +7,8 @@ interface Props {
   batchId: string;
   activePhaseId?: string;
   activePhaseName?: string;
-  onSaved: () => void;
+  defaultTimestamp?: string;
+  onSaved: (timestamp: string) => void;
   onCancel: () => void;
 }
 
@@ -35,8 +36,8 @@ const DEFAULT_LABELS: Record<ProcessEventType, string> = {
   other: "",
 };
 
-export default function ProcessEventForm({ batchId, activePhaseId, activePhaseName, onSaved, onCancel }: Props) {
-  const [timestamp, setTimestamp] = useState(nowDatetimeLocal);
+export default function ProcessEventForm({ batchId, activePhaseId, activePhaseName, defaultTimestamp, onSaved, onCancel }: Props) {
+  const [timestamp, setTimestamp] = useState(defaultTimestamp ?? nowDatetimeLocal);
   const [eventType, setEventType] = useState<ProcessEventType>("bottling");
   const [label, setLabel] = useState(DEFAULT_LABELS["bottling"]);
   const [note, setNote] = useState("");
@@ -52,15 +53,16 @@ export default function ProcessEventForm({ batchId, activePhaseId, activePhaseNa
     if (!label.trim()) return;
     setSaving(true);
     try {
+      const isoTs = new Date(timestamp).toISOString();
       await processEventRepository.add({
         batchId,
         phaseId: activePhaseId,
-        timestamp: new Date(timestamp).toISOString(),
+        timestamp: isoTs,
         eventType,
         label: label.trim(),
         note: note.trim() || undefined,
       });
-      onSaved();
+      onSaved(isoTs);
     } finally {
       setSaving(false);
     }

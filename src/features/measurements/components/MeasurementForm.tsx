@@ -7,7 +7,9 @@ interface Props {
   batchId: string;
   activePhaseId?: string;
   activePhaseName?: string;
-  onSaved: () => void;
+  initialMetric?: MeasurementMetric;
+  defaultTimestamp?: string;
+  onSaved: (timestamp: string) => void;
   onCancel: () => void;
 }
 
@@ -45,9 +47,9 @@ const UNIT_LABELS: Record<MeasurementUnit, string> = {
   humidity_percent: "%",
 };
 
-export default function MeasurementForm({ batchId, activePhaseId, activePhaseName, onSaved, onCancel }: Props) {
-  const [timestamp, setTimestamp] = useState(nowDatetimeLocal);
-  const [metric, setMetric] = useState<MeasurementMetric>("temperature");
+export default function MeasurementForm({ batchId, activePhaseId, activePhaseName, initialMetric, defaultTimestamp, onSaved, onCancel }: Props) {
+  const [timestamp, setTimestamp] = useState(defaultTimestamp ?? nowDatetimeLocal);
+  const [metric, setMetric] = useState<MeasurementMetric>(initialMetric ?? "temperature");
   const [value, setValue] = useState("");
   const [note, setNote] = useState("");
   const [saving, setSaving] = useState(false);
@@ -60,17 +62,18 @@ export default function MeasurementForm({ batchId, activePhaseId, activePhaseNam
     if (isNaN(num)) return;
     setSaving(true);
     try {
+      const isoTs = new Date(timestamp).toISOString();
       await measurementRepository.add({
         batchId,
         phaseId: activePhaseId,
-        timestamp: new Date(timestamp).toISOString(),
+        timestamp: isoTs,
         metric,
         value: num,
         unit,
         source: "manual",
         note: note.trim() || undefined,
       });
-      onSaved();
+      onSaved(isoTs);
     } finally {
       setSaving(false);
     }

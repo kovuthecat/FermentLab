@@ -13,6 +13,10 @@ export const processEventRepository = {
     return db.processEvents.where("batchId").equals(batchId).sortBy("timestamp");
   },
 
+  async update(id: string, data: Partial<Omit<ProcessEvent, "id" | "createdAt">>): Promise<void> {
+    await db.processEvents.update(id, data);
+  },
+
   async remove(id: string): Promise<void> {
     await db.processEvents.delete(id);
   },

@@ -13,6 +13,10 @@ export const observationRepository = {
     return db.observations.where("batchId").equals(batchId).sortBy("timestamp");
   },
 
+  async update(id: string, data: Partial<Omit<StructuredObservation, "id" | "createdAt">>): Promise<void> {
+    await db.observations.update(id, data);
+  },
+
   async remove(id: string): Promise<void> {
     await db.observations.delete(id);
   },

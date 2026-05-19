@@ -23,8 +23,17 @@ import { exportService, downloadJson, makeBatchFilename } from "../../export/ser
 import { useIngredients } from "../../ingredients/hooks/useIngredients";
 import IngredientList from "../../ingredients/components/IngredientList";
 import IngredientForm from "../../ingredients/components/IngredientForm";
+import type { MeasurementMetric } from "../../measurements/types";
+import { isoToDatetimeLocal } from "../../../shared/utils/date";
 
-type ActiveForm = "measurement" | "observation" | "event" | null;
+// ActiveForm includes preset variants for common measurements
+type ActiveForm =
+  | "measurement"
+  | "temperature"
+  | "ph"
+  | "observation"
+  | "event"
+  | null;
 
 const STATUS_LABELS: Record<BatchStatus, string> = {
   active: "En cours",
@@ -94,6 +103,20 @@ function QuickAddBar({
     <div className="quick-add-bar">
       <button
         type="button"
+        className={`btn btn-ghost quick-add-preset ${active === "temperature" ? "btn-ghost-active" : ""}`}
+        onClick={() => toggle("temperature")}
+      >
+        + Temp.
+      </button>
+      <button
+        type="button"
+        className={`btn btn-ghost quick-add-preset ${active === "ph" ? "btn-ghost-active" : ""}`}
+        onClick={() => toggle("ph")}
+      >
+        + pH
+      </button>
+      <button
+        type="button"
         className={`btn btn-ghost ${active === "measurement" ? "btn-ghost-active" : ""}`}
         onClick={() => toggle("measurement")}
       >
@@ -125,6 +148,13 @@ export default function BatchDetailPage() {
   const [showCloseForm, setShowCloseForm] = useState(false);
   const [exporting, setExporting] = useState(false);
   const [showIngredientForm, setShowIngredientForm] = useState(false);
+  const [lastTimestamp, setLastTimestamp] = useState<string | undefined>(undefined);
+  const [savedFeedback, setSavedFeedback] = useState<string | null>(null);
+
+  function showFeedback(msg: string) {
+    setSavedFeedback(msg);
+    setTimeout(() => setSavedFeedback(null), 2500);
+  }
 
   const batch = useLiveQuery(
     () => (batchId ? db.batches.get(batchId) : undefined),
@@ -156,6 +186,16 @@ export default function BatchDetailPage() {
 
   const profile = getProfile(batch.profileId);
 
+  // Measurement preset: "temperature" or "ph" form uses a specific initialMetric
+  const measurementPreset: MeasurementMetric | undefined =
+    activeForm === "temperature" ? "temperature" :
+    activeForm === "ph" ? "ph" :
+    undefined;
+  const showMeasurementForm = activeForm === "measurement" || activeForm === "temperature" || activeForm === "ph";
+
+  // defaultTimestamp for forms: use last saved timestamp if available, converted to datetime-local
+  const defaultTimestamp = lastTimestamp ? isoToDatetimeLocal(lastTimestamp) : undefined;
+
   async function handleExport() {
     if (!batch) return;
     setExporting(true);
@@ -182,8 +222,10 @@ export default function BatchDetailPage() {
     }
   }
 
-  function handleSaved() {
+  function handleSaved(ts: string) {
+    setLastTimestamp(ts);
     setActiveForm(null);
+    showFeedback("Enregistré ✓");
   }
 
   function handleCancel() {
@@ -257,11 +299,16 @@ export default function BatchDetailPage() {
 
         <QuickAddBar active={activeForm} onChange={setActiveForm} />
 
-        {activeForm === "measurement" && (
+        {savedFeedback && <p className="saved-feedback">{savedFeedback}</p>}
+
+        {showMeasurementForm && (
           <MeasurementForm
+            key={activeForm}
             batchId={batch.id}
             activePhaseId={activePhase?.id}
             activePhaseName={activePhase?.label}
+            initialMetric={measurementPreset}
+            defaultTimestamp={defaultTimestamp}
             onSaved={handleSaved}
             onCancel={handleCancel}
           />
@@ -271,6 +318,7 @@ export default function BatchDetailPage() {
             batchId={batch.id}
             activePhaseId={activePhase?.id}
             activePhaseName={activePhase?.label}
+            defaultTimestamp={defaultTimestamp}
             onSaved={handleSaved}
             onCancel={handleCancel}
           />
@@ -280,6 +328,7 @@ export default function BatchDetailPage() {
             batchId={batch.id}
             activePhaseId={activePhase?.id}
             activePhaseName={activePhase?.label}
+            defaultTimestamp={defaultTimestamp}
             onSaved={handleSaved}
             onCancel={handleCancel}
           />

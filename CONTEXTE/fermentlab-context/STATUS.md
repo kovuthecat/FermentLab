@@ -1,10 +1,10 @@
 # STATUS.md
 
-> Dernière mise à jour : 2026-05-19 (consolidation — Étape 12)
+> Dernière mise à jour : 2026-05-19 (UX timeline — Étape 14)
 
 ## Phase actuelle
 
-Phase MVP — association automatique des entrées aux phases actives (Étape 13).
+Phase MVP — consolidation UX timeline et formulaires (Étape 14).
 
 ## Ce qui fonctionne
 
@@ -98,6 +98,16 @@ Phase MVP — association automatique des entrées aux phases actives (Étape 13
   - `BatchDetailPage` : section "Ingrédients initiaux" avec IngredientList (useLiveQuery) + toggle IngredientForm.
   - Build production réussi (450 KB JS). Lint sans erreur.
 
+- **Consolidation UX timeline** (Étape 14) :
+  - `BatchTimeline` : groupement par jour (header date), badges visuels de phase `[F1]`, `[F2]`, `[FROID]`…, heure seule dans chaque groupe, actions ✏️ / ✕ par entrée (visibles au hover ou toujours sur mobile).
+  - **Édition inline** : 3 mini-éditeurs spécialisés dans la timeline (MeasurementEditor, ObservationEditor, ProcessEventEditor), pré-remplis, sans modal.
+  - **Feedback visuel** : toast léger après ajout / modification / suppression.
+  - **QuickAdd spécifique** : boutons `+ Temp.` et `+ pH` en QuickAddBar, pré-sélectionnent le bon type dans le formulaire.
+  - **Auto-remplissage timestamp** : `lastTimestamp` propagé entre les formulaires successifs.
+  - `shared/utils/date.ts` : `isoToDatetimeLocal()` ajouté.
+  - Repositories : méthode `update()` ajoutée sur les 3 tables (measurements, observations, processEvents).
+  - Build ✓ (459 KB JS, 16.20 KB CSS). Lint ✓.
+
 - **Association automatique phaseId** (Étape 13) :
   - `phaseRepository.findActiveByBatch(batchId)` ajouté.
   - `BatchDetailPage` : `activePhase` calculée depuis les phases chargées, passée aux 3 formulaires et à `BatchTimeline`.
@@ -117,6 +127,7 @@ Phase MVP — association automatique des entrées aux phases actives (Étape 13
   - **Ingrédients kombucha** : defaults mis à jour (eau filtrée, thé en g, sucre, SCOBY en unit, liquide starter en ml).
   - **Suppression depuis la timeline** : bouton ✕ sur chaque entrée (mesure / observation / événement), confirmation native.
   - Build production : 449 KB JS. Lint sans erreur.
+- Build production (Étape 14) : 459 KB JS, 16.20 KB CSS. Lint sans erreur.
 
 ## Ce qui n'est pas encore fait
 

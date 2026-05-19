@@ -9,7 +9,8 @@ interface Props {
   batchId: string;
   activePhaseId?: string;
   activePhaseName?: string;
-  onSaved: () => void;
+  defaultTimestamp?: string;
+  onSaved: (timestamp: string) => void;
   onCancel: () => void;
 }
 
@@ -22,8 +23,8 @@ const CATEGORIES: { value: ObservationCategory; label: string }[] = [
   { value: "problem", label: "Problème" },
 ];
 
-export default function ObservationForm({ batchId, activePhaseId, activePhaseName, onSaved, onCancel }: Props) {
-  const [timestamp, setTimestamp] = useState(nowDatetimeLocal);
+export default function ObservationForm({ batchId, activePhaseId, activePhaseName, defaultTimestamp, onSaved, onCancel }: Props) {
+  const [timestamp, setTimestamp] = useState(defaultTimestamp ?? nowDatetimeLocal);
   const [category, setCategory] = useState<ObservationCategory>("activity");
   const [descriptor, setDescriptor] = useState<string>("");
   const [intensity, setIntensity] = useState<string>("");
@@ -42,17 +43,18 @@ export default function ObservationForm({ batchId, activePhaseId, activePhaseNam
     if (!descriptor) return;
     setSaving(true);
     try {
+      const isoTs = new Date(timestamp).toISOString();
       const intensityNum = intensity ? (parseInt(intensity) as 1 | 2 | 3 | 4 | 5) : undefined;
       await observationRepository.add({
         batchId,
         phaseId: activePhaseId,
-        timestamp: new Date(timestamp).toISOString(),
+        timestamp: isoTs,
         category,
         descriptor,
         intensity: intensityNum,
         note: note.trim() || undefined,
       });
-      onSaved();
+      onSaved(isoTs);
     } finally {
       setSaving(false);
     }
