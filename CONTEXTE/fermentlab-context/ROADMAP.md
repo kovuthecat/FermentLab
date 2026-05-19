@@ -12,8 +12,8 @@ Le projet doit d'abord devenir un carnet expérimental fiable avant d'ajouter de
 - [x] Mettre en place IndexedDB via Dexie.
 - [x] Définir les types métier principaux.
 - [x] Créer les profils de fermentation MVP.
-- [ ] Créer un batch.
-- [ ] Ajouter les paramètres initiaux, dont l'état de la culture.
+- [x] Créer un batch.
+- [x] Ajouter les paramètres initiaux, dont l'état de la culture.
 - [ ] Ajouter des phases.
 - [ ] Ajouter mesures, observations et événements.
 - [ ] Clôturer un batch.

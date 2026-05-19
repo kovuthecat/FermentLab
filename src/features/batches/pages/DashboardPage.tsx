@@ -1,20 +1,46 @@
 import { useLiveQuery } from "dexie-react-hooks";
 import { Link } from "react-router-dom";
 import { db } from "../../../db/database";
-import type { Batch } from "../types";
+import { getProfile } from "../../profiles/data/profiles";
+import type { Batch, BatchStatus } from "../types";
+
+const STATUS_LABELS: Record<BatchStatus, string> = {
+  active: "En cours",
+  completed: "Terminé",
+  abandoned: "Abandonné",
+};
+
+function formatDate(iso: string): string {
+  return new Date(iso).toLocaleDateString("fr-FR", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  });
+}
 
 function BatchCard({ batch }: { batch: Batch }) {
-  const durationMs = Date.now() - new Date(batch.startedAt).getTime();
-  const durationHours = Math.floor(durationMs / 3_600_000);
+  const profile = getProfile(batch.profileId);
+  const refrigerated = batch.cultureSnapshot?.refrigerated;
+  const refrigerationHours = batch.cultureSnapshot?.refrigerationDurationHours;
 
   return (
-    <div className="batch-card">
-      <div className="batch-card-name">{batch.name}</div>
-      <div className="batch-card-meta">
-        <span className="batch-card-profile">{batch.profileId.replace("_", " ")}</span>
-        <span className="batch-card-duration">{durationHours}h en cours</span>
+    <Link to={`/batches/${batch.id}`} className="batch-card-link">
+      <div className="batch-card">
+        <div className="batch-card-top">
+          <span className="batch-card-name">{batch.name}</span>
+          <span className={`badge badge-${batch.status}`}>{STATUS_LABELS[batch.status]}</span>
+        </div>
+        <div className="batch-card-meta">
+          <span>{profile?.name ?? batch.profileId}</span>
+          <span>Démarré le {formatDate(batch.startedAt)}</span>
+          {refrigerated && (
+            <span className="badge-culture-cold">
+              {refrigerationHours ? `❄ ${refrigerationHours}h au frigo` : "❄ Réfrigérée"}
+            </span>
+          )}
+        </div>
       </div>
-    </div>
+    </Link>
   );
 }
 
@@ -24,8 +50,13 @@ export default function DashboardPage() {
     []
   );
 
-  const recentBatches = useLiveQuery(
-    () => db.batches.where("status").equals("completed").reverse().sortBy("endedAt"),
+  const closedBatches = useLiveQuery(
+    () =>
+      db.batches
+        .where("status")
+        .anyOf(["completed", "abandoned"])
+        .reverse()
+        .sortBy("startedAt"),
     []
   );
 
@@ -34,7 +65,7 @@ export default function DashboardPage() {
       <div className="page-header">
         <h1>Fermentations</h1>
         <Link to="/batches/new" className="btn btn-primary">
-          + Nouveau batch
+          + Nouveau
         </Link>
       </div>
 
@@ -42,7 +73,10 @@ export default function DashboardPage() {
         <h2>En cours</h2>
         {activeBatches === undefined && <p className="loading">Chargement…</p>}
         {activeBatches?.length === 0 && (
-          <p className="empty">Aucune fermentation active. <Link to="/batches/new">Commencer un batch</Link>.</p>
+          <p className="empty">
+            Aucune fermentation active.{" "}
+            <Link to="/batches/new">Commencer un batch</Link>.
+          </p>
         )}
         <div className="batch-list">
           {activeBatches?.map((batch) => (
@@ -51,11 +85,11 @@ export default function DashboardPage() {
         </div>
       </section>
 
-      {recentBatches && recentBatches.length > 0 && (
+      {closedBatches && closedBatches.length > 0 && (
         <section>
-          <h2>Terminés récemment</h2>
+          <h2>Terminés / Abandonnés</h2>
           <div className="batch-list">
-            {recentBatches.slice(0, 5).map((batch) => (
+            {closedBatches.map((batch) => (
               <BatchCard key={batch.id} batch={batch} />
             ))}
           </div>

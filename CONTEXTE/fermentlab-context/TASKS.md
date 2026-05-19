@@ -17,33 +17,30 @@ Aucune.
 
 ## À faire
 
-- [ ] CreateBatchPage — étape 2 : ingrédients principaux (IngredientEntry).
-- [ ] CreateBatchPage — étape 3 : état de la culture (CultureSnapshot).
-- [ ] CreateBatchPage — étape 4 : contenant (ContainerInfo).
-- [ ] BatchDetailPage : résumé batch, phase actuelle, timeline simple, actions rapides.
-- [ ] PhaseManager : démarrer / finir une phase selon le profil.
-- [ ] QuickAddPanel : ajout rapide mesure / observation / événement depuis le détail batch.
-- [ ] BatchCloseForm : saisie FinalEvaluation.
-- [ ] BatchListPage / ComparisonPage : tableau filtrable des batchs terminés.
-- [ ] Export JSON versionné (schemaVersion 1.0).
+- [ ] PhaseManager : démarrer / finir une phase selon le profil, depuis BatchDetailPage.
+- [ ] QuickAddPanel : ajout rapide mesure / observation / événement depuis BatchDetailPage.
+- [ ] BatchCloseForm : saisie FinalEvaluation + passage status → completed.
+- [ ] Ingrédients dans CreateBatch (IngredientEntry, ajout dynamique).
+- [ ] ComparisonPage : tableau filtrable des batchs terminés.
+- [ ] Export JSON versionné (schemaVersion 1.0), depuis BatchDetailPage.
+- [ ] lib/dates.ts : utilitaires de formatage de dates.
+- [ ] lib/calculations.ts : durée totale, F1/F2, ratio surface/profondeur, ABV.
 - [ ] Validation manuelle Desktop + Mobile.
 
 ## Fait
 
-- [x] Définir vision produit.
-- [x] Définir modèle de données cible.
-- [x] Identifier le besoin de phases F1/F2/réfrigération.
-- [x] Ajouter l'état de la culture au démarrage.
-- [x] Initialiser le projet Vite React TypeScript.
-- [x] Installer react-router-dom, dexie, dexie-react-hooks.
-- [x] Créer l'arborescence feature-first.
-- [x] Créer les types métier (batches, phases, measurements, observations, events, profiles, shared/common).
-- [x] Créer le schéma IndexedDB/Dexie (src/db/database.ts).
-- [x] Créer les 4 profils MVP en données statiques.
-- [x] Créer DashboardPage (liste batchs actifs + terminés, useLiveQuery).
-- [x] Créer CreateBatchPage (formulaire minimal : profil + nom, persistance IndexedDB).
-- [x] TypeScript compile sans erreur.
-- [x] Build production Vite réussi.
+- [x] Définir vision produit et modèle de données.
+- [x] Initialiser Vite React TypeScript, dépendances, arborescence feature-first.
+- [x] Types métier complets (batches, phases, measurements, observations, events, profiles, shared/common).
+- [x] Schéma IndexedDB/Dexie v1.
+- [x] 4 profils MVP statiques.
+- [x] Documentation architecture (architecture.md, DECISIONS.md, PROJECT_MAP.md).
+- [x] DashboardPage : cartes cliquables, badges statut, date, culture réfrigérée, batchs terminés + abandonnés.
+- [x] CreateBatchPage : formulaire complet (profil + nom + date + culture snapshot), auto-suggestion type culture, redirect vers détail.
+- [x] BatchDetailPage : résumé, culture snapshot, placeholders phases/mesures/observations/événements/évaluation.
+- [x] Route /batches/:batchId.
+- [x] CSS mobile-first enrichi (badges, cartes cliquables, formulaire sections, detail page).
+- [x] TypeScript compile sans erreur, build production OK.
 
 ## Bugs connus
 
@@ -51,4 +48,4 @@ Aucun.
 
 ## Dette technique
 
-Aucune.
+- `lib/dates.ts` : formatage des dates est inline dans les pages (à extraire quand utilisé dans 2+ endroits).

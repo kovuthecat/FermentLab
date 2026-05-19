@@ -4,28 +4,31 @@
 
 ## Phase actuelle
 
-Phase MVP — initialisation terminée, app fonctionnelle et buildable.
+Phase MVP — flux batch complet (création → détail) implémenté.
 
 ## Ce qui fonctionne
 
-- Application Vite React TypeScript initialisée et buildable.
-- Routing React Router (Dashboard `/`, CreateBatch `/batches/new`).
+- Application Vite React TypeScript, buildable.
+- Routing React Router : Dashboard `/`, CreateBatch `/batches/new`, BatchDetail `/batches/:batchId`.
 - IndexedDB opérationnel via Dexie (schéma v1).
-- Création de batch minimale : choix du profil + nom → persistance IndexedDB.
-- Dashboard affiche les batchs actifs et terminés en temps réel (useLiveQuery).
+- **Création de batch complète** : profil, nom, date/heure de début, culture snapshot (type, nom, réfrigérée, durée frigo, dernier nourrissage, activité estimée, notes), notes initiales → persistance IndexedDB → redirect vers détail.
+- **Dashboard** : cartes cliquables, badges statut (En cours / Terminé / Abandonné), date de début, indicateur culture réfrigérée, batchs terminés + abandonnés.
+- **Détail batch** : résumé (nom, type, statut, dates, notes), culture snapshot formatée, placeholders pour phases / mesures / observations / événements / évaluation.
+- Dashboard mis à jour en temps réel via `useLiveQuery`.
 - 4 profils de fermentation MVP : water_kefir, milk_kefir, kombucha, sourdough_starter.
+- Profil suggère automatiquement le type de culture dans le formulaire.
 - TypeScript compile sans erreur.
-- Build production réussi (387 KB JS, 2.69 KB CSS).
+- Build production réussi (395 KB JS, 5.34 KB CSS).
 
 ## Ce qui n'est pas encore fait
 
-- Paramètres initiaux détaillés (ingrédients, culture, contenant).
-- Écran détail batch.
-- Gestion des phases.
-- Ajout rapide (mesures, observations, événements).
+- Ingrédients détaillés dans CreateBatch.
+- Gestion des phases (PhaseManager).
+- Ajout rapide mesures / observations / événements (QuickAddPanel).
 - Clôture batch (FinalEvaluation).
-- Comparaison des batchs.
+- Comparaison des batchs (ComparisonPage).
 - Export JSON versionné.
+- `lib/dates.ts` et `lib/calculations.ts`.
 
 ## Validation manuelle effectuée
 
@@ -37,12 +40,12 @@ Phase MVP — initialisation terminée, app fonctionnelle et buildable.
 
 ## Complexité technique actuelle
 
-- Niveau de complexité global : faible, MVP initial.
-- Zones à surveiller : migrations IndexedDB, comparaison multi-entités.
+- Niveau de complexité global : faible à modéré.
+- Zones à surveiller : migrations IndexedDB, composants BatchDetailPage quand le suivi s'enrichira.
 - Refactors à éviter : spécialisation prématurée par fermentation.
 
 ## Contexte IA
 
 - `PROJECT_MAP.md` est à jour : oui.
 - `scripts/export-context.mjs` fonctionne : à tester.
-- Zones à documenter davantage : BatchDetailPage, QuickAdd.
+- Prochaine zone à documenter : PhaseManager + QuickAddPanel.
