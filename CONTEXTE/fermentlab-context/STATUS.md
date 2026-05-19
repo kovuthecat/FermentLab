@@ -1,6 +1,6 @@
 # STATUS.md
 
-> Dernière mise à jour : 2026-05-19 (clôture batch + évaluation finale)
+> Dernière mise à jour : 2026-05-19 (page comparaison MVP)
 
 ## Phase actuelle
 
@@ -9,7 +9,7 @@ Phase MVP — gestion des phases implémentée et séparation métier Phase/Proc
 ## Ce qui fonctionne
 
 - Application Vite React TypeScript, buildable.
-- Routing React Router : Dashboard `/`, CreateBatch `/batches/new`, BatchDetail `/batches/:batchId`.
+- Routing React Router : Dashboard `/`, CreateBatch `/batches/new`, BatchDetail `/batches/:batchId`, Comparaisons `/comparisons`.
 - IndexedDB opérationnel via Dexie (schéma v1).
 - **Création de batch complète** : profil, nom, date/heure de début, culture snapshot (type, nom, réfrigérée, durée frigo, dernier nourrissage, activité estimée, notes), notes initiales → persistance IndexedDB → redirect vers détail.
 - **Dashboard** : cartes cliquables, badges statut (En cours / Terminé / Abandonné), date de début, indicateur culture réfrigérée, batchs terminés + abandonnés.
@@ -33,7 +33,18 @@ Phase MVP — gestion des phases implémentée et séparation métier Phase/Proc
 - 4 profils de fermentation MVP : water_kefir, milk_kefir, kombucha, sourdough_starter.
 - Profil suggère automatiquement le type de culture dans le formulaire.
 - TypeScript compile sans erreur.
-- Build production réussi (420 KB JS, 7.93 KB CSS).
+- Build production réussi (438 KB JS, 12.26 KB CSS).
+- **Page comparaison** (`/comparisons`) :
+  - Route `/comparisons` accessible depuis le header (lien "Comparer").
+  - `comparisonService.getComparisonRows()` : agrège phases, mesures et évaluation finale par batch, retourne `BatchComparisonRow[]`.
+  - Métriques calculées : durée totale, F1, F2, réfrigération, température moyenne, pH initial/final/delta, OG/FG, ABV estimé, frigo culture, score global, succès, à refaire.
+  - Filtres : type de fermentation, statut (terminé/abandonné/tous), succès (oui/non/tous), à refaire (oui/non/tous), score minimum.
+  - Tri : score global, date de fin, durée totale, température moyenne — toggle asc/desc.
+  - Desktop : tableau scrollable horizontal avec toutes les métriques.
+  - Mobile (< 600 px) : cartes avec métriques disponibles, score en badge coloré.
+  - Navigation principale mise à jour (lien "Comparer" dans le header).
+  - `useLiveQuery` : réactif aux modifications des tables batches, phases, measurements, finalEvaluations.
+  - Aucune modification du schéma Dexie.
 - **Calculs métier** (`src/lib/calculations.ts`) :
   - `getBatchDurationHours` : durée totale du batch (batch actif → date actuelle).
   - `getPhaseDurationHours` : durée d'une phase (phase active → date actuelle).
@@ -72,7 +83,7 @@ Phase MVP — gestion des phases implémentée et séparation métier Phase/Proc
 - Ingrédients détaillés dans CreateBatch.
 - ~~Gestion des phases (PhaseManager).~~ ✓ Fait.
 - ~~Clôture batch (FinalEvaluation + passage status → completed).~~ ✓ Fait.
-- Comparaison des batchs (ComparisonPage).
+- ~~Comparaison des batchs (ComparisonPage).~~ ✓ Fait.
 - Export JSON versionné.
 - `lib/dates.ts`.
 - Graphes de mesures.
@@ -97,4 +108,4 @@ Phase MVP — gestion des phases implémentée et séparation métier Phase/Proc
 
 - `PROJECT_MAP.md` est à jour : oui.
 - `scripts/export-context.mjs` fonctionne : à tester.
-- Prochaine zone à documenter : comparaisons + export JSON.
+- Prochaine zone à documenter : export JSON.

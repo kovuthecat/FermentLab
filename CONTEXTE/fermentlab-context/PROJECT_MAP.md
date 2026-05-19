@@ -1,7 +1,7 @@
 # PROJECT_MAP.md
 
 > Carte synthétique du projet FermentLab. À maintenir à chaque changement d'arborescence.
-> Dernière mise à jour : 2026-05-19 (clôture batch + évaluation finale)
+> Dernière mise à jour : 2026-05-19 (page comparaison MVP)
 
 ## Vue d'ensemble
 
@@ -91,9 +91,13 @@ FermentLab/
         services/             ← (À CRÉER si nécessaire)
 
       comparisons/
-        pages/                ← (À CRÉER) tableau filtrable des batchs terminés
+        pages/
+          ComparisonPage.tsx    ← tableau filtrable + cartes mobile des batchs terminés/abandonnés
         components/
+          ComparisonFilters.tsx ← filtres type/statut/succès/àRefaire/scoreMin
+          BatchComparisonTable.tsx ← tableau desktop + cartes mobile
         services/
+          comparisonService.ts  ← agrège phases/mesures/évaluation → BatchComparisonRow[]
 
       export/
         services/
@@ -237,11 +241,17 @@ Rôle : profils de fermentation statiques, suggestions de phases/événements/m�
 Données statiques — pas de table Dexie pour les profils.
 - `getProfile(id)` dans `profiles.ts` pour accès rapide.
 
-### comparisons (À CRÉER)
+### comparisons
 
 Rôle : comparer des batchs par paramètres, durées, mesures finales et scores.
 
-Vue MVP : tableau filtrable. Graphiques reportés en v1.
+Vue MVP : tableau filtrable + cartes mobile. Graphiques reportés en v1.
+
+Fichiers clés :
+- `features/comparisons/services/comparisonService.ts` — `BatchComparisonRow` type + `getComparisonRows()` (agrège phases/mesures/évaluation, calculs purs via lib/calculations)
+- `features/comparisons/pages/ComparisonPage.tsx` — page `/comparisons`, filtres/tri, useLiveQuery réactif
+- `features/comparisons/components/ComparisonFilters.tsx` — 5 filtres (type, statut, succès, à refaire, score min)
+- `features/comparisons/components/BatchComparisonTable.tsx` — tableau scrollable desktop + cartes mobile
 
 ### export (À CRÉER)
 

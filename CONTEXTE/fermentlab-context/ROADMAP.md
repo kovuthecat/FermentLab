@@ -18,7 +18,7 @@ Le projet doit d'abord devenir un carnet expérimental fiable avant d'ajouter de
 - [ ] Ajouter mesures, observations et événements.
 - [ ] Clôturer un batch.
 - [ ] Afficher l'historique des batchs.
-- [ ] Comparer les batchs dans un tableau simple.
+- [x] Comparer les batchs dans un tableau simple.
 - [ ] Exporter les données JSON versionnées.
 
 ## Version 1

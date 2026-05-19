@@ -17,6 +17,13 @@ Aucune.
 
 ## Fait (récent)
 
+## Fait (récent)
+
+- [x] ComparisonPage `/comparisons` : tableau filtrable + cartes mobile des batchs terminés/abandonnés.
+- [x] comparisonService : agrégation phases/mesures/évaluation → BatchComparisonRow.
+- [x] ComparisonFilters : filtres type/statut/succès/àRefaire/scoreMin.
+- [x] BatchComparisonTable : tableau desktop (overflow-x) + cartes mobile (< 600 px).
+- [x] App.tsx + routes.tsx : route /comparisons + lien "Comparer" dans le header.
 - [x] lib/calculations.ts : 9 fonctions de calcul pur (durée, température, pH, densité, ABV, ratio contenant, culture).
 - [x] BatchMetricsSummary : composant affichant les métriques calculées sur la page détail batch.
 - [x] BatchDetailPage : section "Résumé calculé" intégrée.
@@ -31,7 +38,7 @@ Aucune.
 - [x] PhaseManager : démarrer / finir une phase selon le profil, depuis BatchDetailPage.
 - [x] BatchCloseForm : saisie FinalEvaluation + passage status → completed.
 - [ ] Ingrédients dans CreateBatch (IngredientEntry, ajout dynamique).
-- [ ] ComparisonPage : tableau filtrable des batchs terminés.
+- [x] ComparisonPage : tableau filtrable des batchs terminés.
 - [ ] Export JSON versionné (schemaVersion 1.0), depuis BatchDetailPage.
 - [ ] lib/dates.ts : utilitaires de formatage de dates.
 - [x] lib/calculations.ts : durée totale, F1/F2, ratio surface/profondeur, ABV, pH, température, culture.

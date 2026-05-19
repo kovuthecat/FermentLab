@@ -7,6 +7,14 @@ export default function App() {
         <NavLink to="/" className="app-logo">
           FermentLab
         </NavLink>
+        <nav className="app-nav">
+          <NavLink
+            to="/comparisons"
+            className={({ isActive }) => `app-nav-link${isActive ? " active" : ""}`}
+          >
+            Comparer
+          </NavLink>
+        </nav>
       </header>
       <main className="app-main">
         <Outlet />
