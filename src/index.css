@@ -947,3 +947,118 @@ section { margin-bottom: 32px; }
   margin: 0 0 8px;
   display: inline-block;
 }
+
+/* Logout button in nav */
+.app-nav-logout {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+/* Auth page */
+.auth-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100dvh;
+  font-size: 15px;
+  color: var(--color-text-muted);
+}
+
+.auth-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100dvh;
+  padding: 24px 16px;
+  background: var(--color-bg);
+}
+
+.auth-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  padding: 32px 24px;
+  width: 100%;
+  max-width: 380px;
+}
+
+.auth-title {
+  margin: 0 0 24px;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--color-primary);
+  text-align: center;
+}
+
+.auth-subtitle {
+  font-size: 14px;
+  color: var(--color-text-muted);
+  margin: 0 0 20px;
+  line-height: 1.5;
+}
+
+.auth-form { display: flex; flex-direction: column; gap: 12px; }
+
+.auth-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.auth-input {
+  width: 100%;
+  padding: 10px 12px;
+  font-size: 15px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-surface);
+  color: var(--color-text);
+  outline: none;
+  transition: border-color .15s;
+}
+
+.auth-input:focus { border-color: var(--color-primary); }
+
+.auth-input--otp {
+  letter-spacing: .25em;
+  font-size: 22px;
+  text-align: center;
+}
+
+.auth-btn {
+  padding: 10px 16px;
+  font-size: 15px;
+  font-weight: 600;
+  border: none;
+  border-radius: var(--radius);
+  cursor: pointer;
+  background: var(--color-primary);
+  color: #fff;
+  transition: background .15s;
+}
+
+.auth-btn:hover:not(:disabled) { background: var(--color-primary-dark); }
+.auth-btn:disabled { opacity: .6; cursor: not-allowed; }
+
+.auth-btn--secondary {
+  background: none;
+  color: var(--color-text-muted);
+  border: 1px solid var(--color-border);
+}
+
+.auth-btn--secondary:hover:not(:disabled) {
+  background: var(--color-border);
+  color: var(--color-text);
+}
+
+.auth-error {
+  font-size: 13px;
+  color: var(--color-danger);
+  margin: 0;
+  padding: 8px 10px;
+  background: #fee2e2;
+  border-radius: var(--radius);
+}

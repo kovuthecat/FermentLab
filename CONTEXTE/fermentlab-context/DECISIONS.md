@@ -332,6 +332,44 @@ Supprimer la dualité évite toute confusion sur la source de vérité. L'export
 
 ---
 
+## 2026-05-19 — Ajout Supabase Auth OTP + préparation Vercel (Étape 15)
+
+### Décision
+
+L'app est préparée pour un déploiement Vercel avec Supabase comme backend Auth et futur stockage distant.
+
+### Contexte
+
+Besoin d'accès mobile multi-appareil et de persistance distante. Le MVP local-first (Dexie) est fonctionnel — la migration vers Supabase sera incrémentale.
+
+### Choix d'auth
+
+OTP email (`signInWithOtp` + `verifyOtp`) — plus simple qu'un mot de passe, compatible webapp mobile, sans OAuth externe.
+
+### Ce qui a été ajouté
+
+- `@supabase/supabase-js` installé.
+- `src/lib/supabaseClient.ts` : client via `import.meta.env`.
+- `AuthProvider` + `useAuth()` : session réactive via `onAuthStateChange`.
+- `AuthPage` : flux email → OTP.
+- `ProtectedRoute` : toutes les routes protégées.
+- `vercel.json` : rewrite SPA.
+- `supabase/schema.sql` : 7 tables + RLS.
+- `docs/deployment.md` + `docs/supabase-setup.md`.
+
+### Contraintes respectées
+
+- Dexie non supprimé — migration incrémentale prévue.
+- Pas de backend custom.
+- Pas de Next.js.
+- `service_role` jamais exposé côté frontend.
+
+### Prochaine étape
+
+Migrer les repositories Dexie → Supabase, table par table, en commençant par `batches`.
+
+---
+
 ## 2026-05-19 — Centralisation des constantes et helpers partagés
 
 ### Décision

@@ -1,10 +1,10 @@
 # STATUS.md
 
-> Dernière mise à jour : 2026-05-19 (UX timeline — Étape 14)
+> Dernière mise à jour : 2026-05-19 (Déploiement Vercel + Supabase OTP — Étape 15)
 
 ## Phase actuelle
 
-Phase MVP — consolidation UX timeline et formulaires (Étape 14).
+Phase déploiement — préparation Vercel + Supabase Auth OTP (Étape 15).
 
 ## Ce qui fonctionne
 
@@ -129,6 +129,21 @@ Phase MVP — consolidation UX timeline et formulaires (Étape 14).
   - Build production : 449 KB JS. Lint sans erreur.
 - Build production (Étape 14) : 459 KB JS, 16.20 KB CSS. Lint sans erreur.
 
+- **Déploiement Vercel + Supabase OTP** (Étape 15) :
+  - `vercel.json` : rewrite SPA → `/index.html`.
+  - `.env.example` : `VITE_SUPABASE_URL` + `VITE_SUPABASE_ANON_KEY`.
+  - `src/lib/supabaseClient.ts` : client Supabase via `import.meta.env`.
+  - `src/features/auth/AuthProvider.tsx` : contexte session `useAuth()`, `onAuthStateChange`.
+  - `src/features/auth/AuthPage.tsx` : flux OTP email → email input → code OTP → session active.
+  - `src/features/auth/ProtectedRoute.tsx` : redirect `/auth` si pas de session.
+  - `src/main.tsx` : `AuthProvider` wrappé autour de `RouterProvider`.
+  - `src/app/routes.tsx` : route `/auth` + toutes les routes protégées par `ProtectedRoute`.
+  - `src/app/App.tsx` : bouton "Déconnexion" dans le header.
+  - `supabase/schema.sql` : 7 tables (batches, phases, ingredients, measurements, observations, process_events, final_evaluations) avec `user_id`, timestamps, RLS owner-only.
+  - `docs/deployment.md` : guide Vercel complet.
+  - `docs/supabase-setup.md` : guide Supabase pas à pas.
+  - Build ✓. Lint ✓.
+
 ## Ce qui n'est pas encore fait
 
 - ~~Ingrédients détaillés dans CreateBatch.~~ ✓ Fait (Étape 11).
@@ -137,6 +152,7 @@ Phase MVP — consolidation UX timeline et formulaires (Étape 14).
 - ~~Comparaison des batchs (ComparisonPage).~~ ✓ Fait.
 - ~~Export JSON versionné.~~ ✓ Fait.
 - ~~Consolidation architecture (source unique ingrédients, constantes partagées, derivedMetrics, suppression timeline).~~ ✓ Fait (Étape 12).
+- Migration repositories Dexie → Supabase (batchs, phases, ingrédients, mesures, observations, événements, évaluations).
 - Graphes de mesures.
 - Photos.
 

@@ -1,6 +1,14 @@
-import { Outlet, NavLink } from "react-router-dom";
+import { Outlet, NavLink, useNavigate } from "react-router-dom";
+import { supabase } from "../lib/supabaseClient";
 
 export default function App() {
+  const navigate = useNavigate();
+
+  async function handleLogout() {
+    await supabase.auth.signOut();
+    navigate("/auth", { replace: true });
+  }
+
   return (
     <div className="app-shell">
       <header className="app-header">
@@ -14,6 +22,9 @@ export default function App() {
           >
             Comparer
           </NavLink>
+          <button className="app-nav-link app-nav-logout" onClick={handleLogout}>
+            Déconnexion
+          </button>
         </nav>
       </header>
       <main className="app-main">

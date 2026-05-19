@@ -42,13 +42,28 @@ Le projet doit d'abord devenir un carnet expérimental fiable avant d'ajouter de
 - [ ] Rappels simples.
 - [ ] Synchronisation optionnelle.
 
+## Déploiement (en cours)
+
+- [x] `vercel.json` + variables d'environnement Vite.
+- [x] Supabase client (`src/lib/supabaseClient.ts`).
+- [x] Auth OTP email (AuthProvider, AuthPage, ProtectedRoute).
+- [x] SQL schema Supabase (7 tables + RLS).
+- [x] Guide Vercel (`docs/deployment.md`).
+- [x] Guide Supabase (`docs/supabase-setup.md`).
+- [ ] Créer le projet Supabase + exécuter schema.sql.
+- [ ] Ajouter les variables sur Vercel + déployer.
+- [ ] Tester l'auth OTP sur mobile.
+- [ ] Migrer `batchRepository` Dexie → Supabase.
+- [ ] Migrer les autres repositories (phases, ingredients, measurements, observations, events, evaluations).
+
 ## À éviter pour l'instant
 
-- Backend.
-- Authentification.
+- Backend custom.
+- Next.js / Prisma / Docker.
 - Multi-utilisateur.
 - IA embarquée.
 - Recommandations prédictives.
 - Capteurs temps réel.
 - Dashboard complexe.
 - Refactor global prématuré.
+- Exposer `service_role` Supabase côté frontend.

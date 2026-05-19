@@ -15,6 +15,24 @@
 
 Aucune.
 
+## Fait (récent — Étape 15 — Déploiement Vercel + Supabase OTP)
+
+- [x] `vercel.json` : rewrite `/(.*) → /index.html` (routing SPA en production).
+- [x] `.env.example` : `VITE_SUPABASE_URL` + `VITE_SUPABASE_ANON_KEY`.
+- [x] `npm install @supabase/supabase-js`.
+- [x] `src/lib/supabaseClient.ts` : `createClient` via `import.meta.env`.
+- [x] `src/features/auth/AuthProvider.tsx` : contexte `session` + `loading`, `onAuthStateChange`, hook `useAuth()`.
+- [x] `src/features/auth/AuthPage.tsx` : email step → OTP step (`signInWithOtp` + `verifyOtp`).
+- [x] `src/features/auth/ProtectedRoute.tsx` : redirect `/auth` si pas de session.
+- [x] `src/main.tsx` : `AuthProvider` wrappé.
+- [x] `src/app/routes.tsx` : route `/auth` + routes protégées par `ProtectedRoute`.
+- [x] `src/app/App.tsx` : bouton "Déconnexion" (`signOut` + navigate `/auth`).
+- [x] `src/index.css` : styles `auth-page`, `auth-card`, `auth-form`, `auth-input`, `auth-btn`, `app-nav-logout`.
+- [x] `supabase/schema.sql` : 7 tables avec `user_id`, timestamps, RLS owner-only (4 policies par table).
+- [x] `docs/deployment.md` : guide Vercel complet (import repo, variables, redirect URLs, workflow push).
+- [x] `docs/supabase-setup.md` : guide Supabase pas à pas (clés, SQL Editor, tables, RLS, OTP email, redirect URLs, test local).
+- [x] Build ✓. Lint ✓.
+
 ## Fait (récent — Étape 14 — Consolidation UX timeline)
 
 - [x] `shared/utils/date.ts` : `isoToDatetimeLocal(iso)` ajouté (refactorise `nowDatetimeLocal`).
