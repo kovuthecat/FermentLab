@@ -4,7 +4,7 @@
 
 ## Phase actuelle
 
-Phase MVP — timeline de suivi implémentée (mesures + observations + événements).
+Phase MVP — gestion des phases implémentée (affichage, création, clôture, actions rapides par profil).
 
 ## Ce qui fonctionne
 
@@ -21,17 +21,24 @@ Phase MVP — timeline de suivi implémentée (mesures + observations + événem
   - Timeline chronologique fusionnant les 3 types, avec badge couleur par type.
   - Persistance IndexedDB via Dexie (tables measurements, observations, processEvents).
   - QuickAddPanel : 3 boutons toggle, formulaire inline simple.
+- **Gestion des phases** :
+  - Affichage des phases du batch (label, type, début, fin, durée, statut).
+  - Création manuelle (type, label, début, fin optionnelle, notes).
+  - Clôture d'une phase active.
+  - Actions rapides par profil (kombucha/kéfir : Fin F1, Début F2, Fin F2, Mise au froid ; kéfir de lait : Fin F1, Mise au froid ; levain : Nourrissage, Début pousse, Pic d'activité, Début repos, Début apprêt).
+  - Transitions automatiques conservatives (primary→secondary, secondary→refrigeration, rise→rest, rest→proofing).
+  - Persistance IndexedDB.
 - Dashboard mis à jour en temps réel via `useLiveQuery`.
 - 4 profils de fermentation MVP : water_kefir, milk_kefir, kombucha, sourdough_starter.
 - Profil suggère automatiquement le type de culture dans le formulaire.
 - TypeScript compile sans erreur.
-- Build production réussi (409 KB JS, 6.89 KB CSS).
+- Build production réussi (417 KB JS, 7.69 KB CSS).
 - Lint sans erreur.
 
 ## Ce qui n'est pas encore fait
 
 - Ingrédients détaillés dans CreateBatch.
-- Gestion des phases (PhaseManager).
+- ~~Gestion des phases (PhaseManager).~~ ✓ Fait.
 - Clôture batch (FinalEvaluation + passage status → completed).
 - Comparaison des batchs (ComparisonPage).
 - Export JSON versionné.

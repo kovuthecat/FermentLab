@@ -14,7 +14,7 @@ Le projet doit d'abord devenir un carnet expérimental fiable avant d'ajouter de
 - [x] Créer les profils de fermentation MVP.
 - [x] Créer un batch.
 - [x] Ajouter les paramètres initiaux, dont l'état de la culture.
-- [ ] Ajouter des phases.
+- [x] Ajouter des phases.
 - [ ] Ajouter mesures, observations et événements.
 - [ ] Clôturer un batch.
 - [ ] Afficher l'historique des batchs.

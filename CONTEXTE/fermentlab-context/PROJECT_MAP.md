@@ -40,9 +40,12 @@ FermentLab/
       phases/
         types.ts              ← Phase, PhaseType
         services/
-          phaseRepository.ts    ← (À CRÉER)
-        components/             ← (À CRÉER) PhaseManager
+          phaseRepository.ts    ← add / listByBatch / findActiveByType / close / remove
+        components/
+          PhaseList.tsx         ← affichage phases + actions rapides par profil + bouton clôture
+          PhaseForm.tsx         ← formulaire création manuelle
         hooks/
+          usePhases.ts          ← useLiveQuery par batchId
 
       measurements/
         types.ts              ← Measurement, MeasurementMetric, MeasurementUnit, MeasurementSource
@@ -154,10 +157,19 @@ Points de vigilance :
 
 Rôle : représenter F1, F2, réfrigération, nourrissage, pousse, apprêt, etc.
 
+Fichiers clés :
+- `features/phases/types.ts` — Phase, PhaseType (`primary`, `secondary`, `refrigeration`, `feeding`, `rise`, `rest`, `bulk_fermentation`, `proofing`, `other`)
+- `features/phases/services/phaseRepository.ts` — add/listByBatch/findActiveByType/close/remove
+- `features/phases/hooks/usePhases.ts` — useLiveQuery par batchId
+- `features/phases/components/PhaseList.tsx` — liste + actions rapides + clôture
+- `features/phases/components/PhaseForm.tsx` — création manuelle
+
 Points de vigilance :
 - Phases liées au batch par `batchId`.
+- `Phase` requiert `updatedAt` (géré par `phaseRepository.add` et `phaseRepository.close`).
 - Mesures, observations et événements liés à une phase via `phaseId` (optionnel).
 - Ne pas créer un type Phase différent par fermentation.
+- `refrigeration` (pas `cold_storage`), `rise` (pas `growth`) — noms du code existant.
 
 ### measurements
 

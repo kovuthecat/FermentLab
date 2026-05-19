@@ -11,6 +11,8 @@ import MeasurementForm from "../../measurements/components/MeasurementForm";
 import ObservationForm from "../../observations/components/ObservationForm";
 import ProcessEventForm from "../../events/components/ProcessEventForm";
 import BatchTimeline from "../../timeline/components/BatchTimeline";
+import { usePhases } from "../../phases/hooks/usePhases";
+import PhaseList from "../../phases/components/PhaseList";
 
 type ActiveForm = "measurement" | "observation" | "event" | null;
 
@@ -125,6 +127,7 @@ export default function BatchDetailPage() {
   const measurements = useMeasurements(batchId ?? "");
   const observations = useObservations(batchId ?? "");
   const events = useProcessEvents(batchId ?? "");
+  const phases = usePhases(batchId ?? "");
 
   if (batch === undefined) {
     return <div className="page"><p className="loading">Chargement…</p></div>;
@@ -175,6 +178,11 @@ export default function BatchDetailPage() {
           <CultureSection culture={batch.cultureSnapshot} />
         </section>
       )}
+
+      <section>
+        <h2>Phases</h2>
+        <PhaseList batchId={batch.id} profileId={batch.profileId} phases={phases ?? []} />
+      </section>
 
       <section>
         <h2>Suivi</h2>

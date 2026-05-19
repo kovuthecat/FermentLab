@@ -17,7 +17,7 @@ Aucune.
 
 ## À faire
 
-- [ ] PhaseManager : démarrer / finir une phase selon le profil, depuis BatchDetailPage.
+- [x] PhaseManager : démarrer / finir une phase selon le profil, depuis BatchDetailPage.
 - [ ] BatchCloseForm : saisie FinalEvaluation + passage status → completed.
 - [ ] Ingrédients dans CreateBatch (IngredientEntry, ajout dynamique).
 - [ ] ComparisonPage : tableau filtrable des batchs terminés.
@@ -48,6 +48,11 @@ Aucune.
 - [x] BatchTimeline : fusion chronologique mesures + observations + événements, badges couleur, format J+N HH:MM.
 - [x] QuickAddPanel inline dans BatchDetailPage (toggle 3 formulaires).
 - [x] Lint sans erreur, build OK.
+- [x] phaseRepository : add / listByBatch / findActiveByType / close / remove.
+- [x] usePhases : useLiveQuery par batchId.
+- [x] PhaseForm : création manuelle (type, label, début, fin, notes).
+- [x] PhaseList : affichage phases, clôture, actions rapides par profil.
+- [x] BatchDetailPage : section Phases intégrée.
 
 ## Bugs connus
 
