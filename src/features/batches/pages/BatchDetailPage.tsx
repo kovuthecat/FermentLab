@@ -19,6 +19,9 @@ import { useFinalEvaluation } from "../../evaluations/hooks/useFinalEvaluation";
 import BatchCloseForm from "../../evaluations/components/BatchCloseForm";
 import FinalEvaluationDisplay from "../../evaluations/components/FinalEvaluationDisplay";
 import { exportService, downloadJson, makeBatchFilename } from "../../export/services/exportService";
+import { useIngredients } from "../../ingredients/hooks/useIngredients";
+import IngredientList from "../../ingredients/components/IngredientList";
+import IngredientForm from "../../ingredients/components/IngredientForm";
 
 type ActiveForm = "measurement" | "observation" | "event" | null;
 
@@ -128,6 +131,7 @@ export default function BatchDetailPage() {
   const [deleting, setDeleting] = useState(false);
   const [showCloseForm, setShowCloseForm] = useState(false);
   const [exporting, setExporting] = useState(false);
+  const [showIngredientForm, setShowIngredientForm] = useState(false);
 
   const batch = useLiveQuery(
     () => (batchId ? db.batches.get(batchId) : undefined),
@@ -139,6 +143,7 @@ export default function BatchDetailPage() {
   const observations = useObservations(batchId ?? "");
   const events = useProcessEvents(batchId ?? "");
   const phases = usePhases(batchId ?? "");
+  const ingredients = useIngredients(batchId ?? "");
 
   if (batch === undefined) {
     return <div className="page"><p className="loading">Chargement…</p></div>;
@@ -215,6 +220,26 @@ export default function BatchDetailPage() {
           <CultureSection culture={batch.cultureSnapshot} />
         </section>
       )}
+
+      <section>
+        <h2>Ingrédients initiaux</h2>
+        {showIngredientForm ? (
+          <IngredientForm
+            batchId={batch.id}
+            onSaved={() => setShowIngredientForm(false)}
+            onCancel={() => setShowIngredientForm(false)}
+          />
+        ) : (
+          <button
+            type="button"
+            className="btn btn-ghost ingredient-add-btn"
+            onClick={() => setShowIngredientForm(true)}
+          >
+            + Ajouter un ingrédient
+          </button>
+        )}
+        <IngredientList ingredients={ingredients ?? []} />
+      </section>
 
       <section>
         <h2>Phases</h2>

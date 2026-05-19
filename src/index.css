@@ -692,3 +692,109 @@ section { margin-bottom: 32px; }
   font-weight: 500;
   font-variant-numeric: tabular-nums;
 }
+
+/* Ingredient drafts (CreateBatchPage) */
+.ingredient-drafts { display: flex; flex-direction: column; gap: 10px; }
+
+.ingredient-draft {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 12px 36px 12px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  position: relative;
+}
+
+.ingredient-draft-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.ingredient-draft-row .form-group { flex: 1; min-width: 90px; }
+.ingredient-draft-row .form-group-draft-name { flex: 2; min-width: 140px; }
+
+.ingredient-draft-remove {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-text-muted);
+  font-size: 13px;
+  border-radius: 4px;
+  padding: 0;
+  line-height: 1;
+}
+.ingredient-draft-remove:hover { background: #fee2e2; color: var(--color-danger); }
+
+.ingredient-add-btn { margin-top: 4px; font-size: 13px; }
+
+/* Ingredient list (BatchDetailPage) */
+.ingredient-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.ingredient-item {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  flex-wrap: wrap;
+}
+
+.ingredient-main {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
+.ingredient-name { font-weight: 600; }
+
+.ingredient-qty {
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.ingredient-badge {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 10px;
+  background: #f3f4f6;
+  color: #6b7280;
+  white-space: nowrap;
+}
+
+.ingredient-type {
+  font-size: 12px;
+  color: var(--color-text-muted);
+}
+
+.ingredient-notes {
+  width: 100%;
+  font-size: 12px;
+  color: var(--color-text-muted);
+  font-style: italic;
+}

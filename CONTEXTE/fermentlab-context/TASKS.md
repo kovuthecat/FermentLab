@@ -15,6 +15,16 @@
 
 Aucune.
 
+## Fait (récent — Étape 11)
+
+- [x] ingredientRepository : add / listByBatch / remove.
+- [x] useIngredients : useLiveQuery par batchId.
+- [x] IngredientForm : formulaire inline ajout ingrédient depuis BatchDetailPage.
+- [x] IngredientList : affichage + suppression via useLiveQuery.
+- [x] CreateBatchPage : fieldset ingrédients + pré-remplissage par profil + persistance Dexie.
+- [x] BatchDetailPage : section ingrédients avec toggle IngredientForm.
+- [x] index.css : classes ingredient-draft, ingredient-list, ingredient-item.
+
 ## Fait (récent)
 
 ## Fait (récent)
@@ -38,7 +48,7 @@ Aucune.
 
 - [x] PhaseManager : démarrer / finir une phase selon le profil, depuis BatchDetailPage.
 - [x] BatchCloseForm : saisie FinalEvaluation + passage status → completed.
-- [ ] Ingrédients dans CreateBatch (IngredientEntry, ajout dynamique).
+- [x] Ingrédients dans CreateBatch (IngredientEntry, ajout dynamique).
 - [x] ComparisonPage : tableau filtrable des batchs terminés.
 - [x] Export JSON versionné (schemaVersion 1.0), depuis BatchDetailPage.
 - [ ] lib/dates.ts : utilitaires de formatage de dates.

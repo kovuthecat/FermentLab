@@ -15,9 +15,10 @@ Le projet doit d'abord devenir un carnet expérimental fiable avant d'ajouter de
 - [x] Créer un batch.
 - [x] Ajouter les paramètres initiaux, dont l'état de la culture.
 - [x] Ajouter des phases.
-- [ ] Ajouter mesures, observations et événements.
-- [ ] Clôturer un batch.
-- [ ] Afficher l'historique des batchs.
+- [x] Ajouter ingrédients initiaux structurés.
+- [x] Ajouter mesures, observations et événements.
+- [x] Clôturer un batch.
+- [x] Afficher l'historique des batchs.
 - [x] Comparer les batchs dans un tableau simple.
 - [x] Exporter les données JSON versionnées.
 

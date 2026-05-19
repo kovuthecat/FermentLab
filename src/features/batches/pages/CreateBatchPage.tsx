@@ -2,7 +2,20 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { db } from "../../../db/database";
 import { FERMENTATION_PROFILES } from "../../profiles/data/profiles";
-import type { Batch, CultureSnapshot, CultureSnapshotType } from "../types";
+import type {
+  Batch,
+  CultureSnapshot,
+  CultureSnapshotType,
+  IngredientEntry,
+  IngredientType,
+  IngredientUnit,
+  IngredientRole,
+} from "../types";
+import {
+  INGREDIENT_TYPE_LABELS,
+  INGREDIENT_UNIT_LABELS,
+  INGREDIENT_ROLE_LABELS,
+} from "../../ingredients/constants";
 
 function toDatetimeLocal(date: Date): string {
   const pad = (n: number) => String(n).padStart(2, "0");
@@ -32,6 +45,41 @@ const ACTIVITY_LABELS: Record<string, string> = {
   "5": "5 — Excellente",
 };
 
+type IngredientDraft = {
+  key: string;
+  ingredientType: IngredientType;
+  name: string;
+  quantity: string;
+  unit: IngredientUnit;
+  role: IngredientRole;
+};
+
+type IngredientDefaults = Omit<IngredientDraft, "key">;
+
+const PROFILE_INGREDIENT_DEFAULTS: Record<string, IngredientDefaults[]> = {
+  water_kefir: [
+    { ingredientType: "water", name: "Eau", quantity: "1000", unit: "ml", role: "base" },
+    { ingredientType: "sugar", name: "Sucre", quantity: "60", unit: "g", role: "substrate" },
+    { ingredientType: "starter", name: "Grains de kéfir d'eau", quantity: "50", unit: "g", role: "inoculum" },
+    { ingredientType: "fruit", name: "Citron", quantity: "1", unit: "unit", role: "flavoring" },
+  ],
+  milk_kefir: [
+    { ingredientType: "milk", name: "Lait", quantity: "500", unit: "ml", role: "base" },
+    { ingredientType: "starter", name: "Grains de kéfir de lait", quantity: "20", unit: "g", role: "inoculum" },
+  ],
+  kombucha: [
+    { ingredientType: "tea", name: "Thé infusé", quantity: "1000", unit: "ml", role: "base" },
+    { ingredientType: "sugar", name: "Sucre", quantity: "80", unit: "g", role: "substrate" },
+    { ingredientType: "water", name: "Liquide starter", quantity: "100", unit: "ml", role: "inoculum" },
+    { ingredientType: "starter", name: "SCOBY", quantity: "1", unit: "unit", role: "inoculum" },
+  ],
+  sourdough_starter: [
+    { ingredientType: "flour", name: "Farine", quantity: "50", unit: "g", role: "substrate" },
+    { ingredientType: "water", name: "Eau", quantity: "50", unit: "ml", role: "base" },
+    { ingredientType: "starter", name: "Levain chef", quantity: "20", unit: "g", role: "inoculum" },
+  ],
+};
+
 export default function CreateBatchPage() {
   const navigate = useNavigate();
 
@@ -47,6 +95,8 @@ export default function CreateBatchPage() {
   const [activityScore, setActivityScore] = useState("");
   const [cultureNotes, setCultureNotes] = useState("");
 
+  const [ingredients, setIngredients] = useState<IngredientDraft[]>([]);
+
   const [notes, setNotes] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -55,6 +105,25 @@ export default function CreateBatchPage() {
     setProfileId(id);
     const defaultCulture = PROFILE_CULTURE_DEFAULTS[id];
     setCultureType(defaultCulture ?? "");
+    const defaults = PROFILE_INGREDIENT_DEFAULTS[id] ?? [];
+    setIngredients(defaults.map((d) => ({ ...d, key: crypto.randomUUID() })));
+  }
+
+  function updateIngredient(key: string, field: keyof IngredientDefaults, value: string) {
+    setIngredients((prev) =>
+      prev.map((d) => (d.key === key ? { ...d, [field]: value } : d))
+    );
+  }
+
+  function removeIngredient(key: string) {
+    setIngredients((prev) => prev.filter((d) => d.key !== key));
+  }
+
+  function addIngredient() {
+    setIngredients((prev) => [
+      ...prev,
+      { key: crypto.randomUUID(), ingredientType: "other", name: "", quantity: "", unit: "g", role: "other" },
+    ]);
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -99,6 +168,23 @@ export default function CreateBatchPage() {
 
     try {
       await db.batches.add(batch);
+
+      const ingredientEntries: IngredientEntry[] = ingredients
+        .filter((d) => d.name.trim() && d.quantity)
+        .map((d) => ({
+          id: crypto.randomUUID(),
+          batchId: batch.id,
+          ingredientType: d.ingredientType,
+          name: d.name.trim(),
+          quantity: Number(d.quantity),
+          unit: d.unit,
+          role: d.role,
+        }));
+
+      if (ingredientEntries.length > 0) {
+        await db.ingredients.bulkAdd(ingredientEntries);
+      }
+
       navigate(`/batches/${batch.id}`);
     } catch {
       setError("Erreur lors de la création du batch.");
@@ -263,6 +349,106 @@ export default function CreateBatchPage() {
               </div>
             </>
           )}
+        </fieldset>
+
+        <fieldset className="form-section">
+          <legend>Ingrédients initiaux</legend>
+
+          {ingredients.length > 0 ? (
+            <div className="ingredient-drafts">
+              {ingredients.map((draft) => (
+                <div key={draft.key} className="ingredient-draft">
+                  <button
+                    type="button"
+                    className="ingredient-draft-remove"
+                    onClick={() => removeIngredient(draft.key)}
+                    aria-label="Supprimer cet ingrédient"
+                  >
+                    ✕
+                  </button>
+
+                  <div className="ingredient-draft-row">
+                    <div className="form-group">
+                      <label>Type</label>
+                      <select
+                        value={draft.ingredientType}
+                        onChange={(e) => updateIngredient(draft.key, "ingredientType", e.target.value)}
+                      >
+                        {(Object.entries(INGREDIENT_TYPE_LABELS) as [IngredientType, string][]).map(
+                          ([val, label]) => (
+                            <option key={val} value={val}>{label}</option>
+                          )
+                        )}
+                      </select>
+                    </div>
+                    <div className="form-group form-group-draft-name">
+                      <label>Nom</label>
+                      <input
+                        type="text"
+                        value={draft.name}
+                        onChange={(e) => updateIngredient(draft.key, "name", e.target.value)}
+                        placeholder="Ex. Eau filtrée"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="ingredient-draft-row">
+                    <div className="form-group form-group-value">
+                      <label>Qté</label>
+                      <input
+                        type="number"
+                        min="0"
+                        step="any"
+                        value={draft.quantity}
+                        onChange={(e) => updateIngredient(draft.key, "quantity", e.target.value)}
+                        placeholder="500"
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label>Unité</label>
+                      <select
+                        value={draft.unit}
+                        onChange={(e) => updateIngredient(draft.key, "unit", e.target.value)}
+                      >
+                        {(Object.entries(INGREDIENT_UNIT_LABELS) as [IngredientUnit, string][]).map(
+                          ([val, label]) => (
+                            <option key={val} value={val}>{label}</option>
+                          )
+                        )}
+                      </select>
+                    </div>
+                    <div className="form-group">
+                      <label>Rôle</label>
+                      <select
+                        value={draft.role}
+                        onChange={(e) => updateIngredient(draft.key, "role", e.target.value)}
+                      >
+                        {(Object.entries(INGREDIENT_ROLE_LABELS) as [IngredientRole, string][]).map(
+                          ([val, label]) => (
+                            <option key={val} value={val}>{label}</option>
+                          )
+                        )}
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="empty">
+              {profileId
+                ? "Aucun ingrédient — cliquez sur Ajouter ou changez le profil."
+                : "Choisissez un profil pour pré-remplir les ingrédients suggérés."}
+            </p>
+          )}
+
+          <button
+            type="button"
+            className="btn btn-ghost ingredient-add-btn"
+            onClick={addIngredient}
+          >
+            + Ajouter un ingrédient
+          </button>
         </fieldset>
 
         {error && <p className="form-error">{error}</p>}

@@ -1,7 +1,7 @@
 # PROJECT_MAP.md
 
 > Carte synthétique du projet FermentLab. À maintenir à chaque changement d'arborescence.
-> Dernière mise à jour : 2026-05-19 (export JSON versionné)
+> Dernière mise à jour : 2026-05-19 (ingrédients structurés — Étape 11)
 
 ## Vue d'ensemble
 
@@ -83,6 +83,16 @@ FermentLab/
         components/
           BatchCloseForm.tsx            ← formulaire clôture batch (scores, statut, notes)
           FinalEvaluationDisplay.tsx    ← affichage évaluation finale + bouton modifier
+
+      ingredients/
+        constants.ts          ← INGREDIENT_TYPE_LABELS, INGREDIENT_UNIT_LABELS, INGREDIENT_ROLE_LABELS
+        services/
+          ingredientRepository.ts  ← add / listByBatch / remove
+        hooks/
+          useIngredients.ts        ← useLiveQuery par batchId
+        components/
+          IngredientForm.tsx       ← formulaire inline ajout (type, nom, qté, unité, rôle, note)
+          IngredientList.tsx       ← liste affichage + suppression
 
       profiles/
         data/

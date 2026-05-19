@@ -1,6 +1,6 @@
 # STATUS.md
 
-> Dernière mise à jour : 2026-05-19 (export JSON versionné IA-ready)
+> Dernière mise à jour : 2026-05-19 (ingrédients structurés — Étape 11)
 
 ## Phase actuelle
 
@@ -89,9 +89,19 @@ Phase MVP — gestion des phases implémentée et séparation métier Phase/Proc
   - Actions rapides Phase sans doublon événement/phase.
 - Lint sans erreur.
 
+- **Ingrédients structurés** (Étape 11) :
+  - `ingredientRepository` : add / listByBatch / remove.
+  - `useIngredients` : useLiveQuery par batchId.
+  - `IngredientForm` : formulaire inline (type, nom, quantité, unité, rôle, note).
+  - `IngredientList` : affichage liste avec suppression.
+  - `CreateBatchPage` : fieldset "Ingrédients initiaux" avec pré-remplissage par profil (water_kefir, milk_kefir, kombucha, sourdough_starter) + ajout/suppression dynamique + persistance Dexie au submit.
+  - `BatchDetailPage` : section "Ingrédients initiaux" avec IngredientList (useLiveQuery) + toggle IngredientForm.
+  - Stratégie de stockage : table Dexie `ingredients` uniquement (pas de stockage dans `initialParameters.ingredients`). Export déjà correct.
+  - Build production réussi (450 KB JS). Lint sans erreur.
+
 ## Ce qui n'est pas encore fait
 
-- Ingrédients détaillés dans CreateBatch.
+- ~~Ingrédients détaillés dans CreateBatch.~~ ✓ Fait (Étape 11).
 - ~~Gestion des phases (PhaseManager).~~ ✓ Fait.
 - ~~Clôture batch (FinalEvaluation + passage status → completed).~~ ✓ Fait.
 - ~~Comparaison des batchs (ComparisonPage).~~ ✓ Fait.
