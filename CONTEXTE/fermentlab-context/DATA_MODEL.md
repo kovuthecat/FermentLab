@@ -362,19 +362,89 @@ type DerivedMetric = {
 
 ## Export IA
 
-Format cible :
+Implémenté dans `src/features/export/services/exportService.ts`.
+
+### Export batch unique (`exportType: "single_batch"`)
 
 ```json
 {
   "schemaVersion": "1.0",
   "exportedAt": "2026-05-19T00:00:00.000Z",
-  "batch": {},
+  "app": { "name": "FermentLab", "exportType": "single_batch" },
+  "batch": {
+    "id": "...",
+    "schemaVersion": "1",
+    "profileId": "water_kefir",
+    "name": "...",
+    "status": "completed",
+    "startedAt": "...",
+    "endedAt": "...",
+    "notes": "...",
+    "targetVolumeLiters": 1.5,
+    "targetTemperatureC": 22,
+    "initialNotes": "...",
+    "createdAt": "...",
+    "updatedAt": "..."
+  },
+  "cultureSnapshot": { "type": "water_kefir_grains", "refrigerated": true, "..." : "..." },
+  "container": { "type": "jar", "volumeLiters": 2, "..." : "..." },
   "phases": [],
   "ingredients": [],
   "measurements": [],
   "observations": [],
   "processEvents": [],
-  "finalEvaluation": [],
-  "derivedMetrics": []
+  "finalEvaluation": null,
+  "calculatedSummary": {
+    "totalDurationHours": 72.5,
+    "primaryDurationHours": 48,
+    "secondaryDurationHours": 24,
+    "refrigerationDurationHours": 12,
+    "averageTemperatureC": 21.5,
+    "minTemperatureC": 20,
+    "maxTemperatureC": 23,
+    "initialPh": 6.8,
+    "finalPh": 3.2,
+    "deltaPh": -3.6,
+    "originalGravity": 1.04,
+    "finalGravity": 1.005,
+    "estimatedAbv": 4.59,
+    "surfaceDepthRatio": 12.5,
+    "cultureRefrigerationHours": 48
+  }
 }
 ```
+
+### Export tous batchs (`exportType: "all_batches"`)
+
+```json
+{
+  "schemaVersion": "1.0",
+  "exportedAt": "2026-05-19T00:00:00.000Z",
+  "app": { "name": "FermentLab", "exportType": "all_batches" },
+  "batches": [
+    {
+      "batch": {},
+      "cultureSnapshot": {},
+      "container": {},
+      "phases": [],
+      "ingredients": [],
+      "measurements": [],
+      "observations": [],
+      "processEvents": [],
+      "finalEvaluation": null,
+      "calculatedSummary": {}
+    }
+  ]
+}
+```
+
+### Règles export
+
+- `calculatedSummary` : valeurs calculées à la volée depuis `lib/calculations.ts`, jamais persistées.
+- Les champs absents (undefined) sont omis du JSON.
+- `finalEvaluation: null` si aucune évaluation (explicite).
+- `cultureSnapshot: null` si pas de culture (explicite).
+- Ingrédients : fusion table `ingredients` + `batch.initialParameters.ingredients` (dédup par id).
+- Indentation : 2 espaces, lisible humainement.
+- Nom fichier : `fermentlab-batch-[nom-sanitisé]-[date].json` ou `fermentlab-export-[date].json`.
+- Pas de compression, pas de CSV, pas d'import.

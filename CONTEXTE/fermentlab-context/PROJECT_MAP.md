@@ -1,7 +1,7 @@
 # PROJECT_MAP.md
 
 > Carte synthétique du projet FermentLab. À maintenir à chaque changement d'arborescence.
-> Dernière mise à jour : 2026-05-19 (page comparaison MVP)
+> Dernière mise à jour : 2026-05-19 (export JSON versionné)
 
 ## Vue d'ensemble
 
@@ -100,8 +100,9 @@ FermentLab/
           comparisonService.ts  ← agrège phases/mesures/évaluation → BatchComparisonRow[]
 
       export/
+        types.ts              ← SingleBatchExport, AllBatchesExport, BatchExportEntry, CalculatedSummary
         services/
-          exportService.ts    ← (À CRÉER) génération JSON versionné IA-ready
+          exportService.ts    ← exportBatch, exportAllBatches, downloadJson, makeBatchFilename, makeAllBatchesFilename
 
     timeline/
       components/

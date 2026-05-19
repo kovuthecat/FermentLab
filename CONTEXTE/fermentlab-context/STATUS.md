@@ -1,6 +1,6 @@
 # STATUS.md
 
-> Dernière mise à jour : 2026-05-19 (page comparaison MVP)
+> Dernière mise à jour : 2026-05-19 (export JSON versionné IA-ready)
 
 ## Phase actuelle
 
@@ -33,7 +33,18 @@ Phase MVP — gestion des phases implémentée et séparation métier Phase/Proc
 - 4 profils de fermentation MVP : water_kefir, milk_kefir, kombucha, sourdough_starter.
 - Profil suggère automatiquement le type de culture dans le formulaire.
 - TypeScript compile sans erreur.
-- Build production réussi (438 KB JS, 12.26 KB CSS).
+- Build production réussi (442 KB JS, 12.33 KB CSS).
+- **Export JSON versionné** :
+  - `exportService.exportBatch(batchId)` : agrège tout le batch + calculs → `SingleBatchExport`.
+  - `exportService.exportAllBatches()` : tous les batchs triés par date de début → `AllBatchesExport`.
+  - Format `schemaVersion: "1.0"`, `exportedAt`, `app.exportType`.
+  - `calculatedSummary` inclus (durée, F1/F2/réfrigération, temp, pH, OG/FG, ABV, ratio contenant, frigo culture).
+  - Ingrédients : fusion table Dexie + embedded `initialParameters.ingredients` (dédup par id).
+  - `downloadJson(filename, data)` : téléchargement navigateur sans dépendance.
+  - Nom de fichier : `fermentlab-batch-[nom-sanitisé]-[date].json` / `fermentlab-export-[date].json`.
+  - Bouton "Exporter ce batch (JSON)" sur BatchDetailPage (section Export, avant zone dangereuse).
+  - Bouton "⬇ Exporter tout" sur ComparisonPage (header, visible si batchs existants).
+  - Aucune modification du schéma Dexie. Aucune persistance des calculs.
 - **Page comparaison** (`/comparisons`) :
   - Route `/comparisons` accessible depuis le header (lien "Comparer").
   - `comparisonService.getComparisonRows()` : agrège phases, mesures et évaluation finale par batch, retourne `BatchComparisonRow[]`.
@@ -84,6 +95,7 @@ Phase MVP — gestion des phases implémentée et séparation métier Phase/Proc
 - ~~Gestion des phases (PhaseManager).~~ ✓ Fait.
 - ~~Clôture batch (FinalEvaluation + passage status → completed).~~ ✓ Fait.
 - ~~Comparaison des batchs (ComparisonPage).~~ ✓ Fait.
+- ~~Export JSON versionné.~~ ✓ Fait.
 - Export JSON versionné.
 - `lib/dates.ts`.
 - Graphes de mesures.

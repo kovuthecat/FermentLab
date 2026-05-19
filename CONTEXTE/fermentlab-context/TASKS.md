@@ -19,6 +19,7 @@ Aucune.
 
 ## Fait (récent)
 
+- [x] Export JSON versionné : exportService (single_batch + all_batches), types, downloadJson, boutons BatchDetailPage + ComparisonPage.
 - [x] ComparisonPage `/comparisons` : tableau filtrable + cartes mobile des batchs terminés/abandonnés.
 - [x] comparisonService : agrégation phases/mesures/évaluation → BatchComparisonRow.
 - [x] ComparisonFilters : filtres type/statut/succès/àRefaire/scoreMin.
@@ -39,7 +40,7 @@ Aucune.
 - [x] BatchCloseForm : saisie FinalEvaluation + passage status → completed.
 - [ ] Ingrédients dans CreateBatch (IngredientEntry, ajout dynamique).
 - [x] ComparisonPage : tableau filtrable des batchs terminés.
-- [ ] Export JSON versionné (schemaVersion 1.0), depuis BatchDetailPage.
+- [x] Export JSON versionné (schemaVersion 1.0), depuis BatchDetailPage.
 - [ ] lib/dates.ts : utilitaires de formatage de dates.
 - [x] lib/calculations.ts : durée totale, F1/F2, ratio surface/profondeur, ABV, pH, température, culture.
 - [ ] Validation manuelle Desktop + Mobile.

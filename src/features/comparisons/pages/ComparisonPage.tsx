@@ -5,6 +5,8 @@ import { comparisonService } from "../services/comparisonService";
 import type { BatchComparisonRow } from "../services/comparisonService";
 import ComparisonFilters from "../components/ComparisonFilters";
 import type { ComparisonFiltersState } from "../components/ComparisonFilters";
+import BatchComparisonTable from "../components/BatchComparisonTable";
+import { exportService, downloadJson, makeAllBatchesFilename } from "../../export/services/exportService";
 
 const DEFAULT_FILTERS: ComparisonFiltersState = {
   profileId: "",
@@ -13,7 +15,6 @@ const DEFAULT_FILTERS: ComparisonFiltersState = {
   wouldRepeat: "all",
   minScore: 0,
 };
-import BatchComparisonTable from "../components/BatchComparisonTable";
 
 type SortKey = "endedAt" | "overallScore" | "totalDurationHours" | "averageTemperatureC";
 type SortDir = "asc" | "desc";
@@ -83,6 +84,7 @@ export default function ComparisonPage() {
   const [filters, setFilters] = useState<ComparisonFiltersState>(DEFAULT_FILTERS);
   const [sortKey, setSortKey] = useState<SortKey>("overallScore");
   const [sortDir, setSortDir] = useState<SortDir>("desc");
+  const [exporting, setExporting] = useState(false);
 
   const allRows = useLiveQuery(() => comparisonService.getComparisonRows(), []);
 
@@ -95,6 +97,19 @@ export default function ComparisonPage() {
     }
   }
 
+  async function handleExportAll() {
+    setExporting(true);
+    try {
+      const data = await exportService.exportAllBatches();
+      downloadJson(makeAllBatchesFilename(), data);
+    } catch (err) {
+      console.error("Export failed", err);
+      alert("L'export a échoué. Veuillez réessayer.");
+    } finally {
+      setExporting(false);
+    }
+  }
+
   const filtered = allRows ? applyFilters(allRows, filters) : [];
   const sorted = applySort(filtered, sortKey, sortDir);
 
@@ -102,7 +117,19 @@ export default function ComparisonPage() {
     <div className="page">
       <div className="page-header">
         <h1>Comparaison</h1>
-        <Link to="/" className="back-link">← Accueil</Link>
+        <div className="page-header-actions">
+          {allRows && allRows.length > 0 && (
+            <button
+              type="button"
+              className="btn btn-ghost"
+              onClick={handleExportAll}
+              disabled={exporting}
+            >
+              {exporting ? "Export…" : "⬇ Exporter tout"}
+            </button>
+          )}
+          <Link to="/" className="back-link">← Accueil</Link>
+        </div>
       </div>
 
       {allRows === undefined && <p className="loading">Chargement…</p>}

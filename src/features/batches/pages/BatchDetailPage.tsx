@@ -18,6 +18,7 @@ import { batchRepository } from "../services/batchRepository";
 import { useFinalEvaluation } from "../../evaluations/hooks/useFinalEvaluation";
 import BatchCloseForm from "../../evaluations/components/BatchCloseForm";
 import FinalEvaluationDisplay from "../../evaluations/components/FinalEvaluationDisplay";
+import { exportService, downloadJson, makeBatchFilename } from "../../export/services/exportService";
 
 type ActiveForm = "measurement" | "observation" | "event" | null;
 
@@ -126,6 +127,7 @@ export default function BatchDetailPage() {
   const [activeForm, setActiveForm] = useState<ActiveForm>(null);
   const [deleting, setDeleting] = useState(false);
   const [showCloseForm, setShowCloseForm] = useState(false);
+  const [exporting, setExporting] = useState(false);
 
   const batch = useLiveQuery(
     () => (batchId ? db.batches.get(batchId) : undefined),
@@ -151,6 +153,20 @@ export default function BatchDetailPage() {
   }
 
   const profile = getProfile(batch.profileId);
+
+  async function handleExport() {
+    if (!batch) return;
+    setExporting(true);
+    try {
+      const data = await exportService.exportBatch(batch.id);
+      downloadJson(makeBatchFilename(batch.name), data);
+    } catch (err) {
+      console.error("Export failed", err);
+      alert("L'export a échoué. Veuillez réessayer.");
+    } finally {
+      setExporting(false);
+    }
+  }
 
   async function handleDelete() {
     if (!batch) return;
@@ -274,6 +290,18 @@ export default function BatchDetailPage() {
         ) : (
           <p className="empty">Aucune évaluation enregistrée.</p>
         )}
+      </section>
+
+      <section>
+        <h2>Export</h2>
+        <button
+          type="button"
+          className="btn btn-ghost"
+          disabled={exporting}
+          onClick={handleExport}
+        >
+          {exporting ? "Export en cours…" : "Exporter ce batch (JSON)"}
+        </button>
       </section>
 
       <section className="danger-zone">

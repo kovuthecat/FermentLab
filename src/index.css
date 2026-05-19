@@ -464,6 +464,13 @@ section { margin-bottom: 32px; }
 
 .phase-add-btn { align-self: flex-start; font-size: 13px; }
 
+/* Page header actions */
+.page-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
 /* Nav */
 .app-nav {
   margin-left: auto;

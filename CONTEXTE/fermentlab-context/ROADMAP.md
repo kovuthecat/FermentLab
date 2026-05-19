@@ -19,7 +19,7 @@ Le projet doit d'abord devenir un carnet expérimental fiable avant d'ajouter de
 - [ ] Clôturer un batch.
 - [ ] Afficher l'historique des batchs.
 - [x] Comparer les batchs dans un tableau simple.
-- [ ] Exporter les données JSON versionnées.
+- [x] Exporter les données JSON versionnées.
 
 ## Version 1
 
