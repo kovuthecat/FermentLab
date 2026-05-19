@@ -15,6 +15,9 @@ import { usePhases } from "../../phases/hooks/usePhases";
 import PhaseList from "../../phases/components/PhaseList";
 import BatchMetricsSummary from "../components/BatchMetricsSummary";
 import { batchRepository } from "../services/batchRepository";
+import { useFinalEvaluation } from "../../evaluations/hooks/useFinalEvaluation";
+import BatchCloseForm from "../../evaluations/components/BatchCloseForm";
+import FinalEvaluationDisplay from "../../evaluations/components/FinalEvaluationDisplay";
 
 type ActiveForm = "measurement" | "observation" | "event" | null;
 
@@ -122,12 +125,14 @@ export default function BatchDetailPage() {
   const navigate = useNavigate();
   const [activeForm, setActiveForm] = useState<ActiveForm>(null);
   const [deleting, setDeleting] = useState(false);
+  const [showCloseForm, setShowCloseForm] = useState(false);
 
   const batch = useLiveQuery(
     () => (batchId ? db.batches.get(batchId) : undefined),
     [batchId]
   );
 
+  const finalEvaluation = useFinalEvaluation(batchId ?? "");
   const measurements = useMeasurements(batchId ?? "");
   const observations = useObservations(batchId ?? "");
   const events = useProcessEvents(batchId ?? "");
@@ -234,12 +239,41 @@ export default function BatchDetailPage() {
 
       <section>
         <h2>Évaluation finale</h2>
-        <div className="placeholder-list">
-          <div className="placeholder-section">
-            <span className="placeholder-title">Évaluation</span>
-            <span className="placeholder-badge">Bientôt</span>
-          </div>
-        </div>
+        {batch.status === "active" ? (
+          showCloseForm ? (
+            <BatchCloseForm
+              batchId={batch.id}
+              batchCurrentStatus={batch.status}
+              onDone={() => setShowCloseForm(false)}
+              onCancel={() => setShowCloseForm(false)}
+            />
+          ) : (
+            <div>
+              <button
+                type="button"
+                className="btn btn-primary"
+                onClick={() => setShowCloseForm(true)}
+              >
+                Clôturer le batch
+              </button>
+            </div>
+          )
+        ) : showCloseForm ? (
+          <BatchCloseForm
+            batchId={batch.id}
+            batchCurrentStatus={batch.status}
+            existingEvaluation={finalEvaluation}
+            onDone={() => setShowCloseForm(false)}
+            onCancel={() => setShowCloseForm(false)}
+          />
+        ) : finalEvaluation ? (
+          <FinalEvaluationDisplay
+            evaluation={finalEvaluation}
+            onEdit={() => setShowCloseForm(true)}
+          />
+        ) : (
+          <p className="empty">Aucune évaluation enregistrée.</p>
+        )}
       </section>
 
       <section className="danger-zone">

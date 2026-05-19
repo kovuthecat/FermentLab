@@ -1,7 +1,7 @@
 # PROJECT_MAP.md
 
 > Carte synthétique du projet FermentLab. À maintenir à chaque changement d'arborescence.
-> Dernière mise à jour : 2026-05-19 (calculs métier)
+> Dernière mise à jour : 2026-05-19 (clôture batch + évaluation finale)
 
 ## Vue d'ensemble
 
@@ -32,7 +32,7 @@ FermentLab/
           CreateBatchPage.tsx   ← formulaire minimal de création batch
           BatchDetailPage.tsx   ← écran central : résumé + QuickAddPanel + BatchTimeline
         services/
-          batchRepository.ts    ← CRUD Dexie pour batchs
+          batchRepository.ts    ← close (status/endedAt) + remove (cascade)
         hooks/                  ← (vide, À CRÉER si besoin)
         components/
           BatchMetricsSummary.tsx ← résumé des métriques calculées (durée, pH, ABV, ratio…)
@@ -74,6 +74,15 @@ FermentLab/
           useProcessEvents.ts       ← useLiveQuery par batchId
         components/
           ProcessEventForm.tsx      ← formulaire (type contrôlé, libellé auto, datetime, note)
+
+      evaluations/
+        services/
+          finalEvaluationRepository.ts  ← save (create/update) + getByBatch
+        hooks/
+          useFinalEvaluation.ts         ← useLiveQuery par batchId (null = loading)
+        components/
+          BatchCloseForm.tsx            ← formulaire clôture batch (scores, statut, notes)
+          FinalEvaluationDisplay.tsx    ← affichage évaluation finale + bouton modifier
 
       profiles/
         data/

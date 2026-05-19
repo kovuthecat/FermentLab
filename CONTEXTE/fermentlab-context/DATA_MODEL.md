@@ -324,7 +324,7 @@ type FinalEvaluation = {
   carbonationScore?: 1 | 2 | 3 | 4 | 5;
   alcoholPerceptionScore?: 1 | 2 | 3 | 4 | 5;
   textureScore?: 1 | 2 | 3 | 4 | 5;
-  overallScore: 1 | 2 | 3 | 4 | 5;
+  overallScore?: 1 | 2 | 3 | 4 | 5; // optionnel pour les batchs abandonnés
 
   success: boolean;
   wouldRepeat: boolean;

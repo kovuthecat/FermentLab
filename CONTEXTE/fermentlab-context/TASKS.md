@@ -20,13 +20,16 @@ Aucune.
 - [x] lib/calculations.ts : 9 fonctions de calcul pur (durée, température, pH, densité, ABV, ratio contenant, culture).
 - [x] BatchMetricsSummary : composant affichant les métriques calculées sur la page détail batch.
 - [x] BatchDetailPage : section "Résumé calculé" intégrée.
-
-## Fait (récent)
+- [x] BatchCloseForm : saisie FinalEvaluation + passage status → completed/abandoned.
+- [x] finalEvaluationRepository : save (create/update) + getByBatch.
+- [x] useFinalEvaluation : hook useLiveQuery par batchId.
+- [x] FinalEvaluationDisplay : affichage de l'évaluation finale avec bouton modifier.
+- [x] batchRepository.close() : mise à jour status/endedAt/updatedAt.
 
 ## À faire
 
 - [x] PhaseManager : démarrer / finir une phase selon le profil, depuis BatchDetailPage.
-- [ ] BatchCloseForm : saisie FinalEvaluation + passage status → completed.
+- [x] BatchCloseForm : saisie FinalEvaluation + passage status → completed.
 - [ ] Ingrédients dans CreateBatch (IngredientEntry, ajout dynamique).
 - [ ] ComparisonPage : tableau filtrable des batchs terminés.
 - [ ] Export JSON versionné (schemaVersion 1.0), depuis BatchDetailPage.

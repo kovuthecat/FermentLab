@@ -1,6 +1,16 @@
 import { db } from "../../../db/database";
+import type { BatchStatus } from "../types";
 
 export const batchRepository = {
+  async close(
+    batchId: string,
+    status: Exclude<BatchStatus, "active">,
+    endedAt: string
+  ): Promise<void> {
+    const now = new Date().toISOString();
+    await db.batches.update(batchId, { status, endedAt, updatedAt: now });
+  },
+
   async remove(batchId: string): Promise<void> {
     await db.transaction("rw", [
       db.batches,

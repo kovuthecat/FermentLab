@@ -1,6 +1,6 @@
 # STATUS.md
 
-> Dernière mise à jour : 2026-05-19 (calculs métier)
+> Dernière mise à jour : 2026-05-19 (clôture batch + évaluation finale)
 
 ## Phase actuelle
 
@@ -47,6 +47,18 @@ Phase MVP — gestion des phases implémentée et séparation métier Phase/Proc
   - Tous les calculs sont purs, aucun résultat n'est persisté en base.
 - **BatchMetricsSummary** (`src/features/batches/components/`) : section "Résumé calculé" sur la page détail, n'affiche que les valeurs disponibles.
 - **BatchDetailPage** : section "Résumé calculé" ajoutée avant "Suivi".
+- **Clôture batch + évaluation finale** :
+  - Bouton "Clôturer le batch" sur batch actif → formulaire inline.
+  - Formulaire : date/heure de fin, statut final (completed/abandoned), scores structurés (global, acidité, sucrosité, pétillance, alcool, texture), succès, à refaire, résumé problème, notes finales.
+  - Score global obligatoire pour `completed`, optionnel pour `abandoned`.
+  - Écrit `FinalEvaluation` en IndexedDB + met à jour `status`/`endedAt`/`updatedAt` du batch.
+  - Affichage de l'évaluation finale sur batch terminé/abandonné, avec bouton "Modifier l'évaluation".
+  - `finalEvaluationRepository` : save (create/update) + getByBatch.
+  - `useFinalEvaluation` : useLiveQuery par batchId, default null (sentinel chargement).
+  - `BatchCloseForm` composant dédié (`features/evaluations/components/`).
+  - `FinalEvaluationDisplay` composant dédié.
+  - `batchRepository.close()` : met à jour status + endedAt + updatedAt.
+  - `overallScore` rendu optionnel dans le type `FinalEvaluation` (pour batchs abandonnés).
 - **Séparation Phase / ProcessEvent** :
   - `ProcessEventType` réduit aux actions ponctuelles : `bottling`, `filtering`, `ingredient_added`, `burping`, `mixing`, `discard`, `feeding`, `container_changed`, `other`.
   - Types de phase retirés de `ProcessEventType` : `start_phase`, `end_phase`, `end_primary_fermentation`, `start_secondary_fermentation`, `end_secondary_fermentation`, `refrigeration`.
@@ -59,7 +71,7 @@ Phase MVP — gestion des phases implémentée et séparation métier Phase/Proc
 
 - Ingrédients détaillés dans CreateBatch.
 - ~~Gestion des phases (PhaseManager).~~ ✓ Fait.
-- Clôture batch (FinalEvaluation + passage status → completed).
+- ~~Clôture batch (FinalEvaluation + passage status → completed).~~ ✓ Fait.
 - Comparaison des batchs (ComparisonPage).
 - Export JSON versionné.
 - `lib/dates.ts`.
@@ -85,4 +97,4 @@ Phase MVP — gestion des phases implémentée et séparation métier Phase/Proc
 
 - `PROJECT_MAP.md` est à jour : oui.
 - `scripts/export-context.mjs` fonctionne : à tester.
-- Prochaine zone à documenter : PhaseManager + BatchCloseForm.
+- Prochaine zone à documenter : comparaisons + export JSON.
