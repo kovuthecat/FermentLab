@@ -1,8 +1,18 @@
+import { useState } from "react";
 import { useLiveQuery } from "dexie-react-hooks";
 import { useParams, Link } from "react-router-dom";
 import { db } from "../../../db/database";
 import { getProfile } from "../../profiles/data/profiles";
 import type { BatchStatus, CultureSnapshot, CultureSnapshotType } from "../types";
+import { useMeasurements } from "../../measurements/hooks/useMeasurements";
+import { useObservations } from "../../observations/hooks/useObservations";
+import { useProcessEvents } from "../../events/hooks/useProcessEvents";
+import MeasurementForm from "../../measurements/components/MeasurementForm";
+import ObservationForm from "../../observations/components/ObservationForm";
+import ProcessEventForm from "../../events/components/ProcessEventForm";
+import BatchTimeline from "../../timeline/components/BatchTimeline";
+
+type ActiveForm = "measurement" | "observation" | "event" | null;
 
 const STATUS_LABELS: Record<BatchStatus, string> = {
   active: "En cours",
@@ -66,22 +76,55 @@ function CultureSection({ culture }: { culture: CultureSnapshot }) {
   );
 }
 
-function PlaceholderSection({ title }: { title: string }) {
+function QuickAddBar({
+  active,
+  onChange,
+}: {
+  active: ActiveForm;
+  onChange: (f: ActiveForm) => void;
+}) {
+  function toggle(f: Exclude<ActiveForm, null>) {
+    onChange(active === f ? null : f);
+  }
   return (
-    <div className="placeholder-section">
-      <span className="placeholder-title">{title}</span>
-      <span className="placeholder-badge">Bientôt</span>
+    <div className="quick-add-bar">
+      <button
+        type="button"
+        className={`btn btn-ghost ${active === "measurement" ? "btn-ghost-active" : ""}`}
+        onClick={() => toggle("measurement")}
+      >
+        + Mesure
+      </button>
+      <button
+        type="button"
+        className={`btn btn-ghost ${active === "observation" ? "btn-ghost-active" : ""}`}
+        onClick={() => toggle("observation")}
+      >
+        + Observation
+      </button>
+      <button
+        type="button"
+        className={`btn btn-ghost ${active === "event" ? "btn-ghost-active" : ""}`}
+        onClick={() => toggle("event")}
+      >
+        + Événement
+      </button>
     </div>
   );
 }
 
 export default function BatchDetailPage() {
   const { batchId } = useParams<{ batchId: string }>();
+  const [activeForm, setActiveForm] = useState<ActiveForm>(null);
 
   const batch = useLiveQuery(
     () => (batchId ? db.batches.get(batchId) : undefined),
     [batchId]
   );
+
+  const measurements = useMeasurements(batchId ?? "");
+  const observations = useObservations(batchId ?? "");
+  const events = useProcessEvents(batchId ?? "");
 
   if (batch === undefined) {
     return <div className="page"><p className="loading">Chargement…</p></div>;
@@ -96,6 +139,14 @@ export default function BatchDetailPage() {
   }
 
   const profile = getProfile(batch.profileId);
+
+  function handleSaved() {
+    setActiveForm(null);
+  }
+
+  function handleCancel() {
+    setActiveForm(null);
+  }
 
   return (
     <div className="page batch-detail">
@@ -127,17 +178,35 @@ export default function BatchDetailPage() {
 
       <section>
         <h2>Suivi</h2>
-        <div className="placeholder-list">
-          <PlaceholderSection title="Phases" />
-          <PlaceholderSection title="Mesures" />
-          <PlaceholderSection title="Observations" />
-          <PlaceholderSection title="Événements" />
-        </div>
+
+        <QuickAddBar active={activeForm} onChange={setActiveForm} />
+
+        {activeForm === "measurement" && (
+          <MeasurementForm batchId={batch.id} onSaved={handleSaved} onCancel={handleCancel} />
+        )}
+        {activeForm === "observation" && (
+          <ObservationForm batchId={batch.id} onSaved={handleSaved} onCancel={handleCancel} />
+        )}
+        {activeForm === "event" && (
+          <ProcessEventForm batchId={batch.id} onSaved={handleSaved} onCancel={handleCancel} />
+        )}
+
+        <BatchTimeline
+          measurements={measurements ?? []}
+          observations={observations ?? []}
+          events={events ?? []}
+          batchStartedAt={batch.startedAt}
+        />
       </section>
 
       <section>
         <h2>Évaluation finale</h2>
-        <PlaceholderSection title="Évaluation" />
+        <div className="placeholder-list">
+          <div className="placeholder-section">
+            <span className="placeholder-title">Évaluation</span>
+            <span className="placeholder-badge">Bientôt</span>
+          </div>
+        </div>
       </section>
     </div>
   );

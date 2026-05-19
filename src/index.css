@@ -305,3 +305,110 @@ section { margin-bottom: 32px; }
 /* Misc */
 .loading, .empty { color: var(--color-text-muted); font-size: 14px; }
 .empty a { color: var(--color-primary); }
+
+/* Quick-add bar */
+.quick-add-bar {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.btn-ghost-active {
+  background: #dcfce7;
+  border-color: var(--color-primary);
+  color: var(--color-primary-dark);
+}
+
+/* Quick form */
+.quick-form {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin-bottom: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.quick-form-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.quick-form-row .form-group { flex: 1; min-width: 120px; }
+
+.form-group-value { max-width: 120px; }
+.form-group-intensity { max-width: 100px; }
+
+.quick-form-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+/* Timeline */
+.timeline-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.timeline-item {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 10px 14px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 10px;
+  font-size: 14px;
+}
+
+.timeline-ts {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  min-width: 80px;
+  font-variant-numeric: tabular-nums;
+}
+
+.timeline-badge {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 10px;
+  white-space: nowrap;
+}
+
+.timeline-badge-measure  { background: #dbeafe; color: #1d4ed8; }
+.timeline-badge-obs      { background: #fef9c3; color: #854d0e; }
+.timeline-badge-event    { background: #f3e8ff; color: #7e22ce; }
+
+.timeline-summary {
+  flex: 1;
+  min-width: 120px;
+  font-weight: 500;
+}
+
+.timeline-note {
+  width: 100%;
+  font-size: 12px;
+  color: var(--color-text-muted);
+  padding-left: 0;
+  font-style: italic;
+}
+
+.timeline-empty {
+  font-size: 14px;
+  color: var(--color-text-muted);
+  text-align: center;
+  padding: 24px 0;
+  margin: 0;
+}

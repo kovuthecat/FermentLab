@@ -30,7 +30,7 @@ FermentLab/
         pages/
           DashboardPage.tsx     ← liste batchs actifs + terminés (useLiveQuery)
           CreateBatchPage.tsx   ← formulaire minimal de création batch
-          BatchDetailPage.tsx   ← (À CRÉER) écran central, timeline
+          BatchDetailPage.tsx   ← écran central : résumé + QuickAddPanel + BatchTimeline
         services/
           batchRepository.ts    ← (À CRÉER) CRUD Dexie pour batchs
         hooks/                  ← (vide, À CRÉER si besoin)
@@ -46,21 +46,30 @@ FermentLab/
 
       measurements/
         types.ts              ← Measurement, MeasurementMetric, MeasurementUnit, MeasurementSource
-        services/             ← (À CRÉER)
-        components/           ← (À CRÉER)
+        services/
+          measurementRepository.ts  ← add / listByBatch / remove
         hooks/
+          useMeasurements.ts        ← useLiveQuery par batchId
+        components/
+          MeasurementForm.tsx       ← formulaire saisie rapide (metric, value, datetime, note)
 
       observations/
         types.ts              ← StructuredObservation, ObservationCategory, OBSERVATION_DESCRIPTORS
-        services/             ← (À CRÉER)
-        components/           ← (À CRÉER)
+        services/
+          observationRepository.ts  ← add / listByBatch / remove
         hooks/
+          useObservations.ts        ← useLiveQuery par batchId
+        components/
+          ObservationForm.tsx       ← formulaire (catégorie, descripteur, intensité, datetime, note)
 
       events/
         types.ts              ← ProcessEvent, ProcessEventType
-        services/             ← (À CRÉER)
-        components/           ← (À CRÉER)
+        services/
+          processEventRepository.ts ← add / listByBatch / remove
         hooks/
+          useProcessEvents.ts       ← useLiveQuery par batchId
+        components/
+          ProcessEventForm.tsx      ← formulaire (type contrôlé, libellé auto, datetime, note)
 
       profiles/
         data/
@@ -76,6 +85,10 @@ FermentLab/
       export/
         services/
           exportService.ts    ← (À CRÉER) génération JSON versionné IA-ready
+
+    timeline/
+      components/
+        BatchTimeline.tsx     ← fusion chronologique mesures + observations + événements
 
     shared/
       types/
@@ -130,7 +143,7 @@ Fichiers clés :
 - `features/batches/types.ts` — types complets
 - `features/batches/pages/DashboardPage.tsx` — liste live-query
 - `features/batches/pages/CreateBatchPage.tsx` — formulaire création
-- `features/batches/pages/BatchDetailPage.tsx` — (À CRÉER) écran central
+- `features/batches/pages/BatchDetailPage.tsx` — écran central : résumé + suivi (QuickAddPanel + BatchTimeline)
 
 Points de vigilance :
 - Ne pas mélanger batch, mesures et événements dans une seule structure.
@@ -150,6 +163,12 @@ Points de vigilance :
 
 Rôle : mesures numériques horodatées.
 
+Fichiers clés :
+- `features/measurements/types.ts`
+- `features/measurements/services/measurementRepository.ts` — add/listByBatch/remove
+- `features/measurements/hooks/useMeasurements.ts` — useLiveQuery par batchId
+- `features/measurements/components/MeasurementForm.tsx` — formulaire saisie rapide
+
 Points de vigilance :
 - `metric`, `unit`, `source` toujours renseignés.
 - Ne pas stocker de mesure calculée ici (→ `derivedMetrics`).
@@ -157,6 +176,12 @@ Points de vigilance :
 ### observations
 
 Rôle : observations qualitatives structurées.
+
+Fichiers clés :
+- `features/observations/types.ts`
+- `features/observations/services/observationRepository.ts`
+- `features/observations/hooks/useObservations.ts`
+- `features/observations/components/ObservationForm.tsx`
 
 Points de vigilance :
 - `category` et `descriptor` contrôlés.
@@ -166,9 +191,22 @@ Points de vigilance :
 
 Rôle : actions et jalons du process (fin F1, embouteillage, dégazage…).
 
+Fichiers clés :
+- `features/events/types.ts`
+- `features/events/services/processEventRepository.ts`
+- `features/events/hooks/useProcessEvents.ts`
+- `features/events/components/ProcessEventForm.tsx`
+
 Points de vigilance :
 - `eventType` contrôlé, pas une note libre.
 - `metadata` disponible pour données contextuelles additionnelles.
+
+### timeline
+
+Rôle : affichage chronologique fusionné des mesures, observations et événements d'un batch.
+
+Fichiers clés :
+- `features/timeline/components/BatchTimeline.tsx` — reçoit les 3 listes en props, trie par timestamp, affiche badges couleur + résumé
 
 ### profiles
 
@@ -226,6 +264,7 @@ Contient `FinalEvaluation` et `DerivedMetric`, partagés entre features.
 | Notes libres comme données | Données non filtrables | UI favorise les champs structurés |
 | Comparaison multi-entités | Agrégation complexe | Commencer par tableau simple |
 | Photos | Stockage local lourd | Reporté v1 |
+| DESCRIPTOR_LABELS | Dupliqué dans ObservationForm + BatchTimeline | Extraire si 3e utilisation |
 
 ---
 
