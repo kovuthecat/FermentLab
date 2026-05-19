@@ -138,6 +138,10 @@ export default function BatchDetailPage() {
   const phases = usePhases(batchId ?? "");
   const ingredients = useIngredients(batchId ?? "");
 
+  const activePhase = (phases ?? [])
+    .filter((p) => !p.endedAt)
+    .sort((a, b) => b.startedAt.localeCompare(a.startedAt))[0];
+
   if (batch === undefined) {
     return <div className="page"><p className="loading">Chargement…</p></div>;
   }
@@ -254,13 +258,31 @@ export default function BatchDetailPage() {
         <QuickAddBar active={activeForm} onChange={setActiveForm} />
 
         {activeForm === "measurement" && (
-          <MeasurementForm batchId={batch.id} onSaved={handleSaved} onCancel={handleCancel} />
+          <MeasurementForm
+            batchId={batch.id}
+            activePhaseId={activePhase?.id}
+            activePhaseName={activePhase?.label}
+            onSaved={handleSaved}
+            onCancel={handleCancel}
+          />
         )}
         {activeForm === "observation" && (
-          <ObservationForm batchId={batch.id} onSaved={handleSaved} onCancel={handleCancel} />
+          <ObservationForm
+            batchId={batch.id}
+            activePhaseId={activePhase?.id}
+            activePhaseName={activePhase?.label}
+            onSaved={handleSaved}
+            onCancel={handleCancel}
+          />
         )}
         {activeForm === "event" && (
-          <ProcessEventForm batchId={batch.id} onSaved={handleSaved} onCancel={handleCancel} />
+          <ProcessEventForm
+            batchId={batch.id}
+            activePhaseId={activePhase?.id}
+            activePhaseName={activePhase?.label}
+            onSaved={handleSaved}
+            onCancel={handleCancel}
+          />
         )}
 
         <BatchTimeline
@@ -268,6 +290,7 @@ export default function BatchDetailPage() {
           observations={observations ?? []}
           events={events ?? []}
           batchStartedAt={batch.startedAt}
+          phases={phases ?? []}
         />
       </section>
 

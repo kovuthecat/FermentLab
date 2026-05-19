@@ -18,6 +18,13 @@ export const phaseRepository = {
     return all.find((p) => p.type === type && !p.endedAt);
   },
 
+  async findActiveByBatch(batchId: string): Promise<Phase | undefined> {
+    const all = await db.phases.where("batchId").equals(batchId).toArray();
+    return all
+      .filter((p) => !p.endedAt)
+      .sort((a, b) => b.startedAt.localeCompare(a.startedAt))[0];
+  },
+
   async close(id: string, endedAt: string): Promise<void> {
     const now = new Date().toISOString();
     await db.phases.update(id, { endedAt, updatedAt: now });

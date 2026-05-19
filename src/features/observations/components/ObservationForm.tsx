@@ -7,6 +7,8 @@ import { nowDatetimeLocal } from "../../../shared/utils/date";
 
 interface Props {
   batchId: string;
+  activePhaseId?: string;
+  activePhaseName?: string;
   onSaved: () => void;
   onCancel: () => void;
 }
@@ -20,7 +22,7 @@ const CATEGORIES: { value: ObservationCategory; label: string }[] = [
   { value: "problem", label: "Problème" },
 ];
 
-export default function ObservationForm({ batchId, onSaved, onCancel }: Props) {
+export default function ObservationForm({ batchId, activePhaseId, activePhaseName, onSaved, onCancel }: Props) {
   const [timestamp, setTimestamp] = useState(nowDatetimeLocal);
   const [category, setCategory] = useState<ObservationCategory>("activity");
   const [descriptor, setDescriptor] = useState<string>("");
@@ -43,6 +45,7 @@ export default function ObservationForm({ batchId, onSaved, onCancel }: Props) {
       const intensityNum = intensity ? (parseInt(intensity) as 1 | 2 | 3 | 4 | 5) : undefined;
       await observationRepository.add({
         batchId,
+        phaseId: activePhaseId,
         timestamp: new Date(timestamp).toISOString(),
         category,
         descriptor,
@@ -119,6 +122,11 @@ export default function ObservationForm({ batchId, onSaved, onCancel }: Props) {
           placeholder="Remarques…"
         />
       </div>
+      <p className="phase-hint">
+        {activePhaseName
+          ? `Phase associée : ${activePhaseName}`
+          : "Aucune phase active — entrée non associée à une phase"}
+      </p>
       <div className="quick-form-actions">
         <button type="button" className="btn btn-ghost" onClick={onCancel}>Annuler</button>
         <button type="submit" className="btn btn-primary" disabled={saving}>

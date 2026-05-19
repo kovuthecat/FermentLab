@@ -1,9 +1,12 @@
 import { useState } from "react";
 import type { ProcessEventType } from "../types";
 import { processEventRepository } from "../services/processEventRepository";
+import { nowDatetimeLocal } from "../../../shared/utils/date";
 
 interface Props {
   batchId: string;
+  activePhaseId?: string;
+  activePhaseName?: string;
   onSaved: () => void;
   onCancel: () => void;
 }
@@ -32,13 +35,7 @@ const DEFAULT_LABELS: Record<ProcessEventType, string> = {
   other: "",
 };
 
-function nowDatetimeLocal(): string {
-  const d = new Date();
-  d.setSeconds(0, 0);
-  return d.toISOString().slice(0, 16);
-}
-
-export default function ProcessEventForm({ batchId, onSaved, onCancel }: Props) {
+export default function ProcessEventForm({ batchId, activePhaseId, activePhaseName, onSaved, onCancel }: Props) {
   const [timestamp, setTimestamp] = useState(nowDatetimeLocal);
   const [eventType, setEventType] = useState<ProcessEventType>("bottling");
   const [label, setLabel] = useState(DEFAULT_LABELS["bottling"]);
@@ -57,6 +54,7 @@ export default function ProcessEventForm({ batchId, onSaved, onCancel }: Props) 
     try {
       await processEventRepository.add({
         batchId,
+        phaseId: activePhaseId,
         timestamp: new Date(timestamp).toISOString(),
         eventType,
         label: label.trim(),
@@ -114,6 +112,11 @@ export default function ProcessEventForm({ batchId, onSaved, onCancel }: Props) 
           placeholder="Remarques…"
         />
       </div>
+      <p className="phase-hint">
+        {activePhaseName
+          ? `Phase associée : ${activePhaseName}`
+          : "Aucune phase active — entrée non associée à une phase"}
+      </p>
       <div className="quick-form-actions">
         <button type="button" className="btn btn-ghost" onClick={onCancel}>Annuler</button>
         <button type="submit" className="btn btn-primary" disabled={saving}>

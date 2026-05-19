@@ -4,7 +4,7 @@
 
 ## Phase actuelle
 
-Phase MVP — consolidation architecture : source unique ingrédients, constantes partagées, suppression derivedMetrics, suppression depuis timeline.
+Phase MVP — association automatique des entrées aux phases actives (Étape 13).
 
 ## Ce qui fonctionne
 
@@ -97,6 +97,15 @@ Phase MVP — consolidation architecture : source unique ingrédients, constante
   - `CreateBatchPage` : fieldset "Ingrédients initiaux" avec pré-remplissage par profil + ajout/suppression dynamique + persistance Dexie au submit.
   - `BatchDetailPage` : section "Ingrédients initiaux" avec IngredientList (useLiveQuery) + toggle IngredientForm.
   - Build production réussi (450 KB JS). Lint sans erreur.
+
+- **Association automatique phaseId** (Étape 13) :
+  - `phaseRepository.findActiveByBatch(batchId)` ajouté.
+  - `BatchDetailPage` : `activePhase` calculée depuis les phases chargées, passée aux 3 formulaires et à `BatchTimeline`.
+  - `MeasurementForm`, `ObservationForm`, `ProcessEventForm` : `phaseId` assigné au submit ; indicateur de phase affiché dans chaque formulaire.
+  - `ProcessEventForm` : `nowDatetimeLocal` local remplacé par import partagé.
+  - `BatchTimeline` : affiche "Phase : <label>" sur chaque entrée ayant un `phaseId` résolu.
+  - `index.css` : `.phase-hint`, `.timeline-phase-hint` ajoutés.
+  - Build production OK (450 KB). Lint OK.
 
 - **Consolidation architecture** (Étape 12) :
   - **Source unique ingrédients** : `InitialParameters.ingredients` supprimé du type. Table `ingredients` est la seule source. `exportService` simplifié (merge supprimé).

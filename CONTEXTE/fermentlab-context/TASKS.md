@@ -15,6 +15,16 @@
 
 Aucune.
 
+## Fait (récent — Étape 13 — Association automatique phaseId)
+
+- [x] `phaseRepository.findActiveByBatch(batchId)` : filtre `endedAt == null`, retourne la phase la plus récente.
+- [x] `BatchDetailPage` : calcule `activePhase` depuis les phases déjà chargées (sans requête supplémentaire), passe `activePhaseId/activePhaseName` aux 3 formulaires et `phases` à `BatchTimeline`.
+- [x] `MeasurementForm`, `ObservationForm`, `ProcessEventForm` : acceptent `activePhaseId/activePhaseName`, assignent `phaseId` au submit, affichent un indicateur de phase (ou "Aucune phase active").
+- [x] `ProcessEventForm` : `nowDatetimeLocal` local remplacé par import `shared/utils/date.ts`.
+- [x] `BatchTimeline` : accepte `phases?: Phase[]`, construit `phaseById` map, affiche "Phase : <label>" sur chaque entrée liée.
+- [x] `index.css` : classes `.phase-hint` et `.timeline-phase-hint` ajoutées.
+- [x] Build ✓ (450 KB) Lint ✓
+
 ## Fait (récent — Étape 12 — Consolidation)
 
 - [x] Source unique ingrédients : suppression de `InitialParameters.ingredients`, exportService simplifié.
@@ -105,5 +115,5 @@ Aucun.
 ## Dette technique
 
 - `lib/dates.ts` : formatage d'affichage des dates (formatDate, formatDateShort) est encore inline dans plusieurs composants. À extraire si un 3e composant en a besoin.
-- Phases absentes de la timeline : `phaseId` jamais assigné dans les formulaires de saisie.
+- ~~Phases absentes de la timeline~~ : ✓ Résolu (Étape 13). `phaseId` assigné automatiquement.
 - Suppression d'entités depuis la timeline : implémentée. Édition (correction de valeur) reste à faire.

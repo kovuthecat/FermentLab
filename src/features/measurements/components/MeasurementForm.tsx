@@ -5,6 +5,8 @@ import { nowDatetimeLocal } from "../../../shared/utils/date";
 
 interface Props {
   batchId: string;
+  activePhaseId?: string;
+  activePhaseName?: string;
   onSaved: () => void;
   onCancel: () => void;
 }
@@ -43,7 +45,7 @@ const UNIT_LABELS: Record<MeasurementUnit, string> = {
   humidity_percent: "%",
 };
 
-export default function MeasurementForm({ batchId, onSaved, onCancel }: Props) {
+export default function MeasurementForm({ batchId, activePhaseId, activePhaseName, onSaved, onCancel }: Props) {
   const [timestamp, setTimestamp] = useState(nowDatetimeLocal);
   const [metric, setMetric] = useState<MeasurementMetric>("temperature");
   const [value, setValue] = useState("");
@@ -60,6 +62,7 @@ export default function MeasurementForm({ batchId, onSaved, onCancel }: Props) {
     try {
       await measurementRepository.add({
         batchId,
+        phaseId: activePhaseId,
         timestamp: new Date(timestamp).toISOString(),
         metric,
         value: num,
@@ -120,6 +123,11 @@ export default function MeasurementForm({ batchId, onSaved, onCancel }: Props) {
           placeholder="Remarques…"
         />
       </div>
+      <p className="phase-hint">
+        {activePhaseName
+          ? `Phase associée : ${activePhaseName}`
+          : "Aucune phase active — entrée non associée à une phase"}
+      </p>
       <div className="quick-form-actions">
         <button type="button" className="btn btn-ghost" onClick={onCancel}>Annuler</button>
         <button type="submit" className="btn btn-primary" disabled={saving}>

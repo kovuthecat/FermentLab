@@ -1,6 +1,7 @@
 import type { Measurement, MeasurementMetric, MeasurementUnit } from "../../measurements/types";
 import type { StructuredObservation, ObservationCategory } from "../../observations/types";
 import type { ProcessEvent } from "../../events/types";
+import type { Phase } from "../../phases/types";
 import { descriptorLabel } from "../../observations/constants";
 import { measurementRepository } from "../../measurements/services/measurementRepository";
 import { observationRepository } from "../../observations/services/observationRepository";
@@ -11,6 +12,7 @@ interface Props {
   observations: StructuredObservation[];
   events: ProcessEvent[];
   batchStartedAt: string;
+  phases?: Phase[];
 }
 
 type TimelineEntry =
@@ -90,7 +92,9 @@ async function deleteEntry(entry: TimelineEntry): Promise<void> {
   else await processEventRepository.remove(entry.data.id);
 }
 
-export default function BatchTimeline({ measurements, observations, events, batchStartedAt }: Props) {
+export default function BatchTimeline({ measurements, observations, events, batchStartedAt, phases }: Props) {
+  const phaseById = new Map((phases ?? []).map((p) => [p.id, p]));
+
   const entries: TimelineEntry[] = [
     ...measurements.map((m): TimelineEntry => ({ kind: "measurement", data: m })),
     ...observations.map((o): TimelineEntry => ({ kind: "observation", data: o })),
@@ -128,6 +132,9 @@ export default function BatchTimeline({ measurements, observations, events, batc
             <EntryBadge kind={entry.kind} />
             <span className="timeline-summary">{summary}</span>
             {note && <span className="timeline-note">{note}</span>}
+            {entry.data.phaseId && phaseById.has(entry.data.phaseId) && (
+              <span className="timeline-phase-hint">Phase : {phaseById.get(entry.data.phaseId)!.label}</span>
+            )}
             <button
               type="button"
               className="timeline-delete-btn"
