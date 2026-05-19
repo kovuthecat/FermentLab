@@ -72,7 +72,18 @@ Si une table n'a pas de policies :
    - **Confirm Email** peut rester activé ou désactivé selon la préférence
 4. Sauvegarder si modifié.
 
-> FermentLab utilise `signInWithOtp` + `verifyOtp` → Supabase envoie un code à 6 chiffres par email.
+### Longueur du code OTP
+
+Par défaut Supabase envoie 6 caractères. FermentLab est configuré pour **8 caractères**.
+
+Pour aligner :
+
+1. **Authentication → Email Templates** (ou **Auth Settings**).
+2. Chercher **OTP length** ou **Token length**.
+3. Mettre **8**.
+4. Sauvegarder.
+
+> FermentLab utilise `signInWithOtp` + `verifyOtp` → Supabase envoie un code à 8 caractères par email.
 
 ---
 

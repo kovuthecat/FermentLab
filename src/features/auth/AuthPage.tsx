@@ -76,7 +76,7 @@ export default function AuthPage() {
               Code envoyé à <strong>{email}</strong>. Entrez-le ci-dessous.
             </p>
             <label className="auth-label" htmlFor="auth-otp">
-              Code à 6 chiffres
+              Code à 8 caractères
             </label>
             <input
               id="auth-otp"
@@ -84,8 +84,8 @@ export default function AuthPage() {
               className="auth-input auth-input--otp"
               value={otp}
               onChange={(e) => setOtp(e.target.value)}
-              placeholder="123456"
-              maxLength={6}
+              placeholder="12345678"
+              maxLength={8}
               inputMode="numeric"
               required
               autoFocus
