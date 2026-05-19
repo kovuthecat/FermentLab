@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useLiveQuery } from "dexie-react-hooks";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { db } from "../../../db/database";
 import { getProfile } from "../../profiles/data/profiles";
 import type { BatchStatus, CultureSnapshot, CultureSnapshotType } from "../types";
@@ -13,6 +13,7 @@ import ProcessEventForm from "../../events/components/ProcessEventForm";
 import BatchTimeline from "../../timeline/components/BatchTimeline";
 import { usePhases } from "../../phases/hooks/usePhases";
 import PhaseList from "../../phases/components/PhaseList";
+import { batchRepository } from "../services/batchRepository";
 
 type ActiveForm = "measurement" | "observation" | "event" | null;
 
@@ -117,7 +118,9 @@ function QuickAddBar({
 
 export default function BatchDetailPage() {
   const { batchId } = useParams<{ batchId: string }>();
+  const navigate = useNavigate();
   const [activeForm, setActiveForm] = useState<ActiveForm>(null);
+  const [deleting, setDeleting] = useState(false);
 
   const batch = useLiveQuery(
     () => (batchId ? db.batches.get(batchId) : undefined),
@@ -142,6 +145,18 @@ export default function BatchDetailPage() {
   }
 
   const profile = getProfile(batch.profileId);
+
+  async function handleDelete() {
+    if (!batch) return;
+    if (!window.confirm(`Supprimer « ${batch.name} » et toutes ses données ? Cette action est irréversible.`)) return;
+    setDeleting(true);
+    try {
+      await batchRepository.remove(batch.id);
+      navigate("/");
+    } finally {
+      setDeleting(false);
+    }
+  }
 
   function handleSaved() {
     setActiveForm(null);
@@ -215,6 +230,18 @@ export default function BatchDetailPage() {
             <span className="placeholder-badge">Bientôt</span>
           </div>
         </div>
+      </section>
+
+      <section className="danger-zone">
+        <h2>Zone dangereuse</h2>
+        <button
+          type="button"
+          className="btn btn-danger"
+          disabled={deleting}
+          onClick={handleDelete}
+        >
+          {deleting ? "Suppression…" : "Supprimer ce batch"}
+        </button>
       </section>
     </div>
   );
