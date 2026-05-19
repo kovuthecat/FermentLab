@@ -4,7 +4,7 @@
 
 ## Phase actuelle
 
-Phase MVP — gestion des phases implémentée (affichage, création, clôture, actions rapides par profil).
+Phase MVP — gestion des phases implémentée et séparation métier Phase/ProcessEvent nettoyée.
 
 ## Ce qui fonctionne
 
@@ -27,12 +27,19 @@ Phase MVP — gestion des phases implémentée (affichage, création, clôture, 
   - Clôture d'une phase active.
   - Actions rapides par profil (kombucha/kéfir : Fin F1, Début F2, Fin F2, Mise au froid ; kéfir de lait : Fin F1, Mise au froid ; levain : Nourrissage, Début pousse, Pic d'activité, Début repos, Début apprêt).
   - Transitions automatiques conservatives (primary→secondary, secondary→refrigeration, rise→rest, rest→proofing).
+  - Actions rapides phase ne créent plus d'événements de transition (séparation Phase / ProcessEvent).
   - Persistance IndexedDB.
 - Dashboard mis à jour en temps réel via `useLiveQuery`.
 - 4 profils de fermentation MVP : water_kefir, milk_kefir, kombucha, sourdough_starter.
 - Profil suggère automatiquement le type de culture dans le formulaire.
 - TypeScript compile sans erreur.
-- Build production réussi (417 KB JS, 7.69 KB CSS).
+- Build production réussi (416 KB JS, 7.69 KB CSS).
+- **Séparation Phase / ProcessEvent** :
+  - `ProcessEventType` réduit aux actions ponctuelles : `bottling`, `filtering`, `ingredient_added`, `burping`, `mixing`, `discard`, `feeding`, `container_changed`, `other`.
+  - Types de phase retirés de `ProcessEventType` : `start_phase`, `end_phase`, `end_primary_fermentation`, `start_secondary_fermentation`, `end_secondary_fermentation`, `refrigeration`.
+  - `suggestedEvents` des profils nettoyés.
+  - `ProcessEventForm` mis à jour.
+  - Actions rapides Phase sans doublon événement/phase.
 - Lint sans erreur.
 
 ## Ce qui n'est pas encore fait

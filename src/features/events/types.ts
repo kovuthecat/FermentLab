@@ -1,17 +1,12 @@
 export type ProcessEventType =
-  | "start_phase"
-  | "end_phase"
-  | "end_primary_fermentation"
-  | "start_secondary_fermentation"
-  | "end_secondary_fermentation"
   | "bottling"
   | "filtering"
-  | "refrigeration"
-  | "feeding"
-  | "discard"
   | "ingredient_added"
   | "burping"
   | "mixing"
+  | "discard"
+  | "feeding"
+  | "container_changed"
   | "other";
 
 export type ProcessEvent = {

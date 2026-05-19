@@ -9,36 +9,26 @@ interface Props {
 }
 
 const EVENT_TYPES: { value: ProcessEventType; label: string }[] = [
-  { value: "end_primary_fermentation", label: "Fin F1" },
-  { value: "start_secondary_fermentation", label: "Début F2" },
-  { value: "end_secondary_fermentation", label: "Fin F2" },
-  { value: "refrigeration", label: "Mise au froid" },
   { value: "bottling", label: "Embouteillage" },
-  { value: "feeding", label: "Nourrissage" },
-  { value: "discard", label: "Discard" },
+  { value: "filtering", label: "Filtrage" },
   { value: "ingredient_added", label: "Ingrédient ajouté" },
   { value: "burping", label: "Dégazage" },
   { value: "mixing", label: "Mélange" },
-  { value: "filtering", label: "Filtrage" },
-  { value: "start_phase", label: "Début de phase" },
-  { value: "end_phase", label: "Fin de phase" },
+  { value: "discard", label: "Discard" },
+  { value: "feeding", label: "Nourrissage" },
+  { value: "container_changed", label: "Changement de contenant" },
   { value: "other", label: "Autre" },
 ];
 
 const DEFAULT_LABELS: Record<ProcessEventType, string> = {
-  end_primary_fermentation: "Fin F1",
-  start_secondary_fermentation: "Début F2",
-  end_secondary_fermentation: "Fin F2",
-  refrigeration: "Mise au froid",
   bottling: "Embouteillage",
-  feeding: "Nourrissage",
-  discard: "Discard",
+  filtering: "Filtrage",
   ingredient_added: "Ingrédient ajouté",
   burping: "Dégazage",
   mixing: "Mélange",
-  filtering: "Filtrage",
-  start_phase: "Début de phase",
-  end_phase: "Fin de phase",
+  discard: "Discard",
+  feeding: "Nourrissage",
+  container_changed: "Changement de contenant",
   other: "",
 };
 
@@ -50,8 +40,8 @@ function nowDatetimeLocal(): string {
 
 export default function ProcessEventForm({ batchId, onSaved, onCancel }: Props) {
   const [timestamp, setTimestamp] = useState(nowDatetimeLocal);
-  const [eventType, setEventType] = useState<ProcessEventType>("end_primary_fermentation");
-  const [label, setLabel] = useState(DEFAULT_LABELS["end_primary_fermentation"]);
+  const [eventType, setEventType] = useState<ProcessEventType>("bottling");
+  const [label, setLabel] = useState(DEFAULT_LABELS["bottling"]);
   const [note, setNote] = useState("");
   const [saving, setSaving] = useState(false);
 

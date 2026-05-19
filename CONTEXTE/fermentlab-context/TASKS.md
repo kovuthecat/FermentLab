@@ -15,6 +15,8 @@
 
 Aucune.
 
+## Fait (récent)
+
 ## À faire
 
 - [x] PhaseManager : démarrer / finir une phase selon le profil, depuis BatchDetailPage.
@@ -53,6 +55,7 @@ Aucune.
 - [x] PhaseForm : création manuelle (type, label, début, fin, notes).
 - [x] PhaseList : affichage phases, clôture, actions rapides par profil.
 - [x] BatchDetailPage : section Phases intégrée.
+- [x] Séparation Phase / ProcessEvent : retrait des types de phase de ProcessEventType, nettoyage profils, actions rapides sans événements de transition.
 
 ## Bugs connus
 

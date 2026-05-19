@@ -66,7 +66,6 @@ function buildQuickActions(profileId: string): QuickAction[] {
         label: "Fin F1",
         handler: async (batchId) => {
           const ts = now();
-          await processEventRepository.add({ batchId, timestamp: ts, eventType: "end_primary_fermentation", label: "Fin F1" });
           const active = await phaseRepository.findActiveByType(batchId, "primary");
           if (active) await phaseRepository.close(active.id, ts);
         },
@@ -75,7 +74,6 @@ function buildQuickActions(profileId: string): QuickAction[] {
         label: "Début F2",
         handler: async (batchId) => {
           const ts = now();
-          await processEventRepository.add({ batchId, timestamp: ts, eventType: "start_secondary_fermentation", label: "Début F2" });
           const activePrimary = await phaseRepository.findActiveByType(batchId, "primary");
           if (activePrimary) await phaseRepository.close(activePrimary.id, ts);
           await phaseRepository.add({ batchId, type: "secondary", label: PHASE_LABELS.secondary, startedAt: ts });
@@ -85,7 +83,6 @@ function buildQuickActions(profileId: string): QuickAction[] {
         label: "Fin F2",
         handler: async (batchId) => {
           const ts = now();
-          await processEventRepository.add({ batchId, timestamp: ts, eventType: "end_secondary_fermentation", label: "Fin F2" });
           const active = await phaseRepository.findActiveByType(batchId, "secondary");
           if (active) await phaseRepository.close(active.id, ts);
         },
@@ -94,7 +91,6 @@ function buildQuickActions(profileId: string): QuickAction[] {
         label: "Mise au froid",
         handler: async (batchId) => {
           const ts = now();
-          await processEventRepository.add({ batchId, timestamp: ts, eventType: "refrigeration", label: "Mise au froid" });
           const activeSecondary = await phaseRepository.findActiveByType(batchId, "secondary");
           if (activeSecondary) await phaseRepository.close(activeSecondary.id, ts);
           await phaseRepository.add({ batchId, type: "refrigeration", label: PHASE_LABELS.refrigeration, startedAt: ts });
@@ -109,7 +105,6 @@ function buildQuickActions(profileId: string): QuickAction[] {
         label: "Fin F1",
         handler: async (batchId) => {
           const ts = now();
-          await processEventRepository.add({ batchId, timestamp: ts, eventType: "end_primary_fermentation", label: "Fin F1" });
           const active = await phaseRepository.findActiveByType(batchId, "primary");
           if (active) await phaseRepository.close(active.id, ts);
         },
@@ -118,7 +113,6 @@ function buildQuickActions(profileId: string): QuickAction[] {
         label: "Mise au froid",
         handler: async (batchId) => {
           const ts = now();
-          await processEventRepository.add({ batchId, timestamp: ts, eventType: "refrigeration", label: "Mise au froid" });
           const activePrimary = await phaseRepository.findActiveByType(batchId, "primary");
           if (activePrimary) await phaseRepository.close(activePrimary.id, ts);
           await phaseRepository.add({ batchId, type: "refrigeration", label: PHASE_LABELS.refrigeration, startedAt: ts });

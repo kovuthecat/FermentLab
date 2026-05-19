@@ -292,19 +292,14 @@ type ProcessEvent = {
   timestamp: string;
 
   eventType:
-    | "start_phase"
-    | "end_phase"
-    | "end_primary_fermentation"
-    | "start_secondary_fermentation"
-    | "end_secondary_fermentation"
     | "bottling"
     | "filtering"
-    | "refrigeration"
-    | "feeding"
-    | "discard"
     | "ingredient_added"
     | "burping"
     | "mixing"
+    | "discard"
+    | "feeding"
+    | "container_changed"
     | "other";
 
   label: string;
