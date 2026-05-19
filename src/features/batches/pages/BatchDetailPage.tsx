@@ -3,7 +3,8 @@ import { useLiveQuery } from "dexie-react-hooks";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { db } from "../../../db/database";
 import { getProfile } from "../../profiles/data/profiles";
-import type { BatchStatus, CultureSnapshot, CultureSnapshotType } from "../types";
+import type { BatchStatus, CultureSnapshot } from "../types";
+import { CULTURE_TYPE_LABELS } from "../constants";
 import { useMeasurements } from "../../measurements/hooks/useMeasurements";
 import { useObservations } from "../../observations/hooks/useObservations";
 import { useProcessEvents } from "../../events/hooks/useProcessEvents";
@@ -29,14 +30,6 @@ const STATUS_LABELS: Record<BatchStatus, string> = {
   active: "En cours",
   completed: "Terminé",
   abandoned: "Abandonné",
-};
-
-const CULTURE_TYPE_LABELS: Record<CultureSnapshotType, string> = {
-  kombucha_scoby: "SCOBY",
-  water_kefir_grains: "Grains de kéfir d'eau",
-  milk_kefir_grains: "Grains de kéfir de lait",
-  sourdough_starter: "Levain",
-  other: "Autre",
 };
 
 function formatDate(iso: string): string {

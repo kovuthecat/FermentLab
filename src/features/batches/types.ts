@@ -65,7 +65,6 @@ export type IngredientEntry = {
 export type InitialParameters = {
   targetVolumeLiters?: number;
   targetTemperatureC?: number;
-  ingredients: IngredientEntry[];
   freeNotes?: string;
 };
 

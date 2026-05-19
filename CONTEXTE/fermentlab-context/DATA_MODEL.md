@@ -87,10 +87,11 @@ type Batch = {
 type InitialParameters = {
   targetVolumeLiters?: number;
   targetTemperatureC?: number;
-  ingredients: IngredientEntry[];
   freeNotes?: string;
 };
 ```
+
+> Les ingrédients sont stockés dans la table Dexie `ingredients` (source unique). `initialParameters.ingredients` a été supprimé.
 
 ## IngredientEntry
 
@@ -338,27 +339,7 @@ type FinalEvaluation = {
 
 ## DerivedMetric
 
-Ne jamais mélanger données saisies et calculées.
-
-```ts
-type DerivedMetric = {
-  id: string;
-  batchId: string;
-
-  metric:
-    | "duration_hours"
-    | "primary_duration_hours"
-    | "secondary_duration_hours"
-    | "refrigeration_duration_hours"
-    | "surface_depth_ratio"
-    | "estimated_abv";
-
-  value: number;
-  unit: string;
-  method: string;
-  calculatedAt: string;
-};
-```
+> **Supprimé en schéma v2.** La table `derivedMetrics` n'a jamais été utilisée. Tous les calculs dérivés sont effectués à la volée depuis `lib/calculations.ts`. Voir DECISIONS.md.
 
 ## Export IA
 
@@ -444,7 +425,7 @@ Implémenté dans `src/features/export/services/exportService.ts`.
 - Les champs absents (undefined) sont omis du JSON.
 - `finalEvaluation: null` si aucune évaluation (explicite).
 - `cultureSnapshot: null` si pas de culture (explicite).
-- Ingrédients : fusion table `ingredients` + `batch.initialParameters.ingredients` (dédup par id).
+- Ingrédients : lecture directe de la table `ingredients` (source unique).
 - Indentation : 2 espaces, lisible humainement.
 - Nom fichier : `fermentlab-batch-[nom-sanitisé]-[date].json` ou `fermentlab-export-[date].json`.
 - Pas de compression, pas de CSV, pas d'import.

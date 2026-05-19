@@ -1,10 +1,10 @@
 # STATUS.md
 
-> Dernière mise à jour : 2026-05-19 (ingrédients structurés — Étape 11)
+> Dernière mise à jour : 2026-05-19 (consolidation — Étape 12)
 
 ## Phase actuelle
 
-Phase MVP — gestion des phases implémentée et séparation métier Phase/ProcessEvent nettoyée.
+Phase MVP — consolidation architecture : source unique ingrédients, constantes partagées, suppression derivedMetrics, suppression depuis timeline.
 
 ## Ce qui fonctionne
 
@@ -39,7 +39,7 @@ Phase MVP — gestion des phases implémentée et séparation métier Phase/Proc
   - `exportService.exportAllBatches()` : tous les batchs triés par date de début → `AllBatchesExport`.
   - Format `schemaVersion: "1.0"`, `exportedAt`, `app.exportType`.
   - `calculatedSummary` inclus (durée, F1/F2/réfrigération, temp, pH, OG/FG, ABV, ratio contenant, frigo culture).
-  - Ingrédients : fusion table Dexie + embedded `initialParameters.ingredients` (dédup par id).
+  - Ingrédients : lecture directe de la table `ingredients` (source unique).
   - `downloadJson(filename, data)` : téléchargement navigateur sans dépendance.
   - Nom de fichier : `fermentlab-batch-[nom-sanitisé]-[date].json` / `fermentlab-export-[date].json`.
   - Bouton "Exporter ce batch (JSON)" sur BatchDetailPage (section Export, avant zone dangereuse).
@@ -94,10 +94,20 @@ Phase MVP — gestion des phases implémentée et séparation métier Phase/Proc
   - `useIngredients` : useLiveQuery par batchId.
   - `IngredientForm` : formulaire inline (type, nom, quantité, unité, rôle, note).
   - `IngredientList` : affichage liste avec suppression.
-  - `CreateBatchPage` : fieldset "Ingrédients initiaux" avec pré-remplissage par profil (water_kefir, milk_kefir, kombucha, sourdough_starter) + ajout/suppression dynamique + persistance Dexie au submit.
+  - `CreateBatchPage` : fieldset "Ingrédients initiaux" avec pré-remplissage par profil + ajout/suppression dynamique + persistance Dexie au submit.
   - `BatchDetailPage` : section "Ingrédients initiaux" avec IngredientList (useLiveQuery) + toggle IngredientForm.
-  - Stratégie de stockage : table Dexie `ingredients` uniquement (pas de stockage dans `initialParameters.ingredients`). Export déjà correct.
   - Build production réussi (450 KB JS). Lint sans erreur.
+
+- **Consolidation architecture** (Étape 12) :
+  - **Source unique ingrédients** : `InitialParameters.ingredients` supprimé du type. Table `ingredients` est la seule source. `exportService` simplifié (merge supprimé).
+  - **Dexie v2** : migration supprimant la table `derivedMetrics` (jamais utilisée). `DerivedMetric` supprimé de `shared/types/common.ts`.
+  - **`nowDatetimeLocal()`** centralisé dans `shared/utils/date.ts`. Corrige un bug UTC silencieux dans les 4 composants précédents. `toDatetimeLocal` de `CreateBatchPage` remplacé.
+  - **`DESCRIPTOR_LABELS` + `descriptorLabel()`** centralisés dans `observations/constants.ts`. Supprimés de `ObservationForm` et `BatchTimeline`.
+  - **`CULTURE_TYPE_LABELS`** centralisé dans `batches/constants.ts`. Supprimé de `CreateBatchPage` et `BatchDetailPage`.
+  - **`DEFAULT_INGREDIENT_UNITS`** ajouté à `ingredients/constants.ts`. `IngredientForm` auto-remplit l'unité au changement de type.
+  - **Ingrédients kombucha** : defaults mis à jour (eau filtrée, thé en g, sucre, SCOBY en unit, liquide starter en ml).
+  - **Suppression depuis la timeline** : bouton ✕ sur chaque entrée (mesure / observation / événement), confirmation native.
+  - Build production : 449 KB JS. Lint sans erreur.
 
 ## Ce qui n'est pas encore fait
 
@@ -106,8 +116,7 @@ Phase MVP — gestion des phases implémentée et séparation métier Phase/Proc
 - ~~Clôture batch (FinalEvaluation + passage status → completed).~~ ✓ Fait.
 - ~~Comparaison des batchs (ComparisonPage).~~ ✓ Fait.
 - ~~Export JSON versionné.~~ ✓ Fait.
-- Export JSON versionné.
-- `lib/dates.ts`.
+- ~~Consolidation architecture (source unique ingrédients, constantes partagées, derivedMetrics, suppression timeline).~~ ✓ Fait (Étape 12).
 - Graphes de mesures.
 - Photos.
 

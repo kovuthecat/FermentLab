@@ -3,6 +3,7 @@ import type { FinalEvaluation } from "../../../shared/types/common";
 import type { BatchStatus } from "../../batches/types";
 import { batchRepository } from "../../batches/services/batchRepository";
 import { finalEvaluationRepository } from "../services/finalEvaluationRepository";
+import { nowDatetimeLocal } from "../../../shared/utils/date";
 
 interface Props {
   batchId: string;
@@ -13,12 +14,6 @@ interface Props {
 }
 
 type ScoreVal = "" | "1" | "2" | "3" | "4" | "5";
-
-function nowDatetimeLocal(): string {
-  const d = new Date();
-  d.setSeconds(0, 0);
-  return d.toISOString().slice(0, 16);
-}
 
 function parseScore(v: ScoreVal): 1 | 2 | 3 | 4 | 5 | undefined {
   return v === "" ? undefined : (parseInt(v) as 1 | 2 | 3 | 4 | 5);

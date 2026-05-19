@@ -11,24 +11,14 @@ import type {
   IngredientUnit,
   IngredientRole,
 } from "../types";
+import { CULTURE_TYPE_LABELS } from "../constants";
 import {
   INGREDIENT_TYPE_LABELS,
   INGREDIENT_UNIT_LABELS,
   INGREDIENT_ROLE_LABELS,
+  DEFAULT_INGREDIENT_UNITS,
 } from "../../ingredients/constants";
-
-function toDatetimeLocal(date: Date): string {
-  const pad = (n: number) => String(n).padStart(2, "0");
-  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
-}
-
-const CULTURE_TYPE_LABELS: Record<CultureSnapshotType, string> = {
-  kombucha_scoby: "SCOBY",
-  water_kefir_grains: "Grains de kéfir d'eau",
-  milk_kefir_grains: "Grains de kéfir de lait",
-  sourdough_starter: "Levain",
-  other: "Autre",
-};
+import { nowDatetimeLocal } from "../../../shared/utils/date";
 
 const PROFILE_CULTURE_DEFAULTS: Partial<Record<string, CultureSnapshotType>> = {
   water_kefir: "water_kefir_grains",
@@ -68,10 +58,11 @@ const PROFILE_INGREDIENT_DEFAULTS: Record<string, IngredientDefaults[]> = {
     { ingredientType: "starter", name: "Grains de kéfir de lait", quantity: "20", unit: "g", role: "inoculum" },
   ],
   kombucha: [
-    { ingredientType: "tea", name: "Thé infusé", quantity: "1000", unit: "ml", role: "base" },
+    { ingredientType: "water", name: "Eau filtrée", quantity: "700", unit: "ml", role: "base" },
+    { ingredientType: "tea", name: "Thé", quantity: "8", unit: "g", role: "substrate" },
     { ingredientType: "sugar", name: "Sucre", quantity: "80", unit: "g", role: "substrate" },
-    { ingredientType: "water", name: "Liquide starter", quantity: "100", unit: "ml", role: "inoculum" },
     { ingredientType: "starter", name: "SCOBY", quantity: "1", unit: "unit", role: "inoculum" },
+    { ingredientType: "starter", name: "Liquide starter (thé fermenté)", quantity: "200", unit: "ml", role: "inoculum" },
   ],
   sourdough_starter: [
     { ingredientType: "flour", name: "Farine", quantity: "50", unit: "g", role: "substrate" },
@@ -85,7 +76,7 @@ export default function CreateBatchPage() {
 
   const [profileId, setProfileId] = useState("");
   const [name, setName] = useState("");
-  const [startedAt, setStartedAt] = useState(() => toDatetimeLocal(new Date()));
+  const [startedAt, setStartedAt] = useState(nowDatetimeLocal);
 
   const [cultureType, setCultureType] = useState<CultureSnapshotType | "">("");
   const [cultureName, setCultureName] = useState("");
@@ -111,7 +102,14 @@ export default function CreateBatchPage() {
 
   function updateIngredient(key: string, field: keyof IngredientDefaults, value: string) {
     setIngredients((prev) =>
-      prev.map((d) => (d.key === key ? { ...d, [field]: value } : d))
+      prev.map((d) => {
+        if (d.key !== key) return d;
+        const updated = { ...d, [field]: value };
+        if (field === "ingredientType") {
+          updated.unit = DEFAULT_INGREDIENT_UNITS[value as IngredientType];
+        }
+        return updated;
+      })
     );
   }
 
@@ -158,7 +156,7 @@ export default function CreateBatchPage() {
       name: name.trim(),
       status: "active",
       startedAt: new Date(startedAt).toISOString(),
-      initialParameters: { ingredients: [] },
+      initialParameters: {},
       container: {},
       ...(cultureSnapshot && { cultureSnapshot }),
       ...(notes.trim() && { notes: notes.trim() }),

@@ -4,7 +4,7 @@ import type { Phase } from "../features/phases/types";
 import type { Measurement } from "../features/measurements/types";
 import type { StructuredObservation } from "../features/observations/types";
 import type { ProcessEvent } from "../features/events/types";
-import type { FinalEvaluation, DerivedMetric } from "../shared/types/common";
+import type { FinalEvaluation } from "../shared/types/common";
 
 export class FermentLabDB extends Dexie {
   batches!: EntityTable<Batch, "id">;
@@ -14,7 +14,6 @@ export class FermentLabDB extends Dexie {
   observations!: EntityTable<StructuredObservation, "id">;
   processEvents!: EntityTable<ProcessEvent, "id">;
   finalEvaluations!: EntityTable<FinalEvaluation, "id">;
-  derivedMetrics!: EntityTable<DerivedMetric, "id">;
 
   constructor() {
     super("fermentlab");
@@ -27,6 +26,15 @@ export class FermentLabDB extends Dexie {
       processEvents: "id, batchId, phaseId, eventType, timestamp",
       finalEvaluations: "id, batchId, completedAt",
       derivedMetrics: "id, batchId, metric",
+    });
+    this.version(2).stores({
+      batches: "id, profileId, status, startedAt, createdAt",
+      phases: "id, batchId, type, startedAt",
+      ingredients: "id, batchId, ingredientType",
+      measurements: "id, batchId, phaseId, metric, timestamp",
+      observations: "id, batchId, phaseId, category, timestamp",
+      processEvents: "id, batchId, phaseId, eventType, timestamp",
+      finalEvaluations: "id, batchId, completedAt",
     });
   }
 }

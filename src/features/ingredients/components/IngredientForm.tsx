@@ -5,6 +5,7 @@ import {
   INGREDIENT_TYPE_LABELS,
   INGREDIENT_UNIT_LABELS,
   INGREDIENT_ROLE_LABELS,
+  DEFAULT_INGREDIENT_UNITS,
 } from "../constants";
 
 type Props = {
@@ -47,7 +48,11 @@ export default function IngredientForm({ batchId, onSaved, onCancel }: Props) {
           <label>Type</label>
           <select
             value={ingredientType}
-            onChange={(e) => setIngredientType(e.target.value as IngredientType)}
+            onChange={(e) => {
+              const t = e.target.value as IngredientType;
+              setIngredientType(t);
+              setUnit(DEFAULT_INGREDIENT_UNITS[t]);
+            }}
           >
             {(Object.entries(INGREDIENT_TYPE_LABELS) as [IngredientType, string][]).map(
               ([val, label]) => (

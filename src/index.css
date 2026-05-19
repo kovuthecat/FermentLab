@@ -419,6 +419,25 @@ section { margin-bottom: 32px; }
   margin: 0;
 }
 
+.timeline-delete-btn {
+  margin-left: auto;
+  flex-shrink: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-text-muted);
+  font-size: 13px;
+  padding: 2px 6px;
+  border-radius: var(--radius);
+  line-height: 1;
+  opacity: 0.4;
+  transition: opacity 0.15s, color 0.15s;
+}
+.timeline-delete-btn:hover {
+  opacity: 1;
+  color: #dc2626;
+}
+
 /* Phases */
 .phase-list-container { display: flex; flex-direction: column; gap: 12px; }
 

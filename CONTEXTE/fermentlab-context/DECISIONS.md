@@ -271,16 +271,81 @@ Les données de base (phases, mesures) suffisent à calculer les indicateurs à 
 
 ### Raison du choix
 
-Les calculs sont suffisamment rapides pour être effectués à chaque rendu. Les fonctions pures sont testables et réutilisables. La table `derivedMetrics` reste disponible pour un usage futur (export JSON enrichi, comparaison batchs).
+Les calculs sont suffisamment rapides pour être effectués à chaque rendu. Les fonctions pures sont testables et réutilisables.
 
 ### Conséquences
 
 - `estimateAbvFromDensity` retourne `null` si OG ou FG manque, ou si OG ≤ FG (incohérence).
 - L'ABV est affiché comme estimation uniquement.
 - `getPhaseDurationByType` utilise la date actuelle si la phase est active.
-- `derivedMetrics` n'est pas utilisé pour l'instant.
 
 ### Impact IA
 
 - Impact sur la complexité : faible.
 - Impact sur la maintenance IA : très favorable — pas d'état caché en base.
+
+---
+
+## 2026-05-19 — Suppression de la table derivedMetrics (migration Dexie v2)
+
+### Décision
+
+La table `derivedMetrics` est supprimée du schéma IndexedDB (migration v1 → v2).
+
+### Contexte
+
+La table existait dans le schéma v1 mais n'a jamais été alimentée ni lue. La décision de calculer les métriques dérivées à la volée (cf. décision précédente) rend la table inutile.
+
+### Raison du choix
+
+Supprimer une table zombie réduit la confusion pour les développeurs futurs et simplifie `batchRepository.remove()`. La migration est sans risque car la table a toujours été vide.
+
+### Conséquences
+
+- `DerivedMetric` et `DerivedMetricType` supprimés de `shared/types/common.ts`.
+- `db.derivedMetrics` supprimé de `database.ts`.
+- `batchRepository.remove()` simplifié (plus de suppression des `derivedMetrics`).
+- Dexie v2 créé — la migration supprime automatiquement la table vide.
+
+---
+
+## 2026-05-19 — Source unique de vérité pour les ingrédients : table ingredients uniquement
+
+### Décision
+
+Les ingrédients d'un batch sont stockés exclusivement dans la table Dexie `ingredients`. Le champ `initialParameters.ingredients[]` est supprimé du type `InitialParameters`.
+
+### Contexte
+
+Le champ `initialParameters.ingredients` était présent dans le type mais toujours initialisé vide (`[]`) à la création. Les ingrédients réels étaient systématiquement écrits dans la table `ingredients`. L'`exportService` fusionnait les deux sources artificiellement.
+
+### Raison du choix
+
+Supprimer la dualité évite toute confusion sur la source de vérité. L'export est simplifié (lecture directe de la table, sans merge).
+
+### Conséquences
+
+- `InitialParameters.ingredients` retiré du type `Batch`.
+- `exportService.buildBatchEntry` : merge supprimé, lecture directe de `db.ingredients`.
+- `CreateBatchPage` : `initialParameters: {}` (plus de `ingredients: []`).
+- Aucune migration Dexie nécessaire — les ingrédients existants sont déjà dans la table.
+
+---
+
+## 2026-05-19 — Centralisation des constantes et helpers partagés
+
+### Décision
+
+Les constantes et helpers dupliqués sont centralisés dans des fichiers dédiés.
+
+### Fichiers créés
+
+- `src/shared/utils/date.ts` — `nowDatetimeLocal()` (heure locale correcte, remplace les 5 copies UTC incorrectes).
+- `src/features/observations/constants.ts` — `DESCRIPTOR_LABELS`, `descriptorLabel()`.
+- `src/features/batches/constants.ts` — `CULTURE_TYPE_LABELS`.
+- `src/features/ingredients/constants.ts` — ajout de `DEFAULT_INGREDIENT_UNITS`.
+
+### Conséquences
+
+- `nowDatetimeLocal()` corrige silencieusement un bug : les implémentations précédentes utilisaient `toISOString().slice(0,16)` (UTC), la version centralisée utilise les méthodes locales (heure du navigateur).
+- `DESCRIPTOR_LABELS` et `CULTURE_TYPE_LABELS` ne sont plus définis localement dans les composants.

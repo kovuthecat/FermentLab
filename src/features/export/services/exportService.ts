@@ -24,7 +24,7 @@ import type {
 } from "../types";
 
 async function buildBatchEntry(batch: Batch): Promise<BatchExportEntry> {
-  const [phases, measurements, observations, processEvents, evaluation, dbIngredients] =
+  const [phases, measurements, observations, processEvents, evaluation, ingredients] =
     await Promise.all([
       phaseRepository.listByBatch(batch.id),
       measurementRepository.listByBatch(batch.id),
@@ -33,11 +33,6 @@ async function buildBatchEntry(batch: Batch): Promise<BatchExportEntry> {
       finalEvaluationRepository.getByBatch(batch.id),
       db.ingredients.where("batchId").equals(batch.id).toArray(),
     ]);
-
-  // Merge ingredients from Dexie table and embedded initialParameters (dedup by id)
-  const embedded = batch.initialParameters.ingredients ?? [];
-  const dbIds = new Set(dbIngredients.map((i) => i.id));
-  const ingredients = [...dbIngredients, ...embedded.filter((i) => !dbIds.has(i.id))];
 
   // Calculated summary — pure functions, never persisted
   const tempStats = getTemperatureStats(measurements);

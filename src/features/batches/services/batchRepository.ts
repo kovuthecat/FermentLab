@@ -20,7 +20,6 @@ export const batchRepository = {
       db.processEvents,
       db.ingredients,
       db.finalEvaluations,
-      db.derivedMetrics,
     ], async () => {
       await db.batches.delete(batchId);
       await db.phases.where("batchId").equals(batchId).delete();
@@ -29,7 +28,6 @@ export const batchRepository = {
       await db.processEvents.where("batchId").equals(batchId).delete();
       await db.ingredients.where("batchId").equals(batchId).delete();
       await db.finalEvaluations.where("batchId").equals(batchId).delete();
-      await db.derivedMetrics.where("batchId").equals(batchId).delete();
     });
   },
 };

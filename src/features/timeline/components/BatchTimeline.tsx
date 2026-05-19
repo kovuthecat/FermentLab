@@ -1,6 +1,10 @@
 import type { Measurement, MeasurementMetric, MeasurementUnit } from "../../measurements/types";
 import type { StructuredObservation, ObservationCategory } from "../../observations/types";
 import type { ProcessEvent } from "../../events/types";
+import { descriptorLabel } from "../../observations/constants";
+import { measurementRepository } from "../../measurements/services/measurementRepository";
+import { observationRepository } from "../../observations/services/observationRepository";
+import { processEventRepository } from "../../events/services/processEventRepository";
 
 interface Props {
   measurements: Measurement[];
@@ -47,23 +51,6 @@ const CATEGORY_LABELS: Record<ObservationCategory, string> = {
   problem: "Problème",
 };
 
-const DESCRIPTOR_LABELS: Record<string, string> = {
-  clear: "Clair", cloudy: "Trouble", foamy: "Mousseux", bubbly: "Bulleux",
-  separated: "Séparé", sediment: "Sédiment", mold_suspected: "Moisissure suspectée", scoby_growth: "Croissance SCOBY",
-  neutral: "Neutre", yeasty: "Levuré", fruity: "Fruité", acidic: "Acide",
-  vinegar: "Vinaigré", sulfur: "Soufré", alcoholic: "Alcoolisé", unpleasant: "Désagréable",
-  sweet: "Sucré", balanced: "Équilibré", bitter: "Amer", bland: "Fade", overfermented: "Surfermenté",
-  liquid: "Liquide", thick: "Épais", syrupy: "Sirupeux", creamy: "Crémeux", elastic: "Élastique", collapsed: "Retombé",
-  none: "Aucune", low: "Faible", medium: "Moyenne", high: "Élevée", peak: "Pic", declining: "En baisse",
-  contamination_suspected: "Contamination suspectée", too_acidic: "Trop acide",
-  no_activity: "Pas d'activité", excessive_pressure: "Pression excessive", off_smell: "Odeur anormale",
-  other: "Autre",
-};
-
-function descriptorLabel(d: string): string {
-  return DESCRIPTOR_LABELS[d] ?? d.replace(/_/g, " ");
-}
-
 function formatTimestamp(iso: string, batchStartedAt: string): string {
   const date = new Date(iso);
   const start = new Date(batchStartedAt);
@@ -97,6 +84,12 @@ function observationSummary(o: StructuredObservation): string {
   return `${cat} — ${desc}${intensity}`;
 }
 
+async function deleteEntry(entry: TimelineEntry): Promise<void> {
+  if (entry.kind === "measurement") await measurementRepository.remove(entry.data.id);
+  else if (entry.kind === "observation") await observationRepository.remove(entry.data.id);
+  else await processEventRepository.remove(entry.data.id);
+}
+
 export default function BatchTimeline({ measurements, observations, events, batchStartedAt }: Props) {
   const entries: TimelineEntry[] = [
     ...measurements.map((m): TimelineEntry => ({ kind: "measurement", data: m })),
@@ -110,6 +103,11 @@ export default function BatchTimeline({ measurements, observations, events, batc
         Aucune entrée. Utilisez les boutons ci-dessus pour commencer le suivi.
       </p>
     );
+  }
+
+  async function handleDelete(entry: TimelineEntry) {
+    if (!window.confirm("Supprimer cette entrée ?")) return;
+    await deleteEntry(entry);
   }
 
   return (
@@ -130,6 +128,14 @@ export default function BatchTimeline({ measurements, observations, events, batc
             <EntryBadge kind={entry.kind} />
             <span className="timeline-summary">{summary}</span>
             {note && <span className="timeline-note">{note}</span>}
+            <button
+              type="button"
+              className="timeline-delete-btn"
+              onClick={() => handleDelete(entry)}
+              aria-label="Supprimer cette entrée"
+            >
+              ✕
+            </button>
           </li>
         );
       })}

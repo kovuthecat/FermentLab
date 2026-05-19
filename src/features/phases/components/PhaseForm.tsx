@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { PhaseType } from "../types";
 import { phaseRepository } from "../services/phaseRepository";
+import { nowDatetimeLocal } from "../../../shared/utils/date";
 
 interface Props {
   batchId: string;
@@ -31,12 +32,6 @@ const DEFAULT_LABELS: Record<PhaseType, string> = {
   proofing: "Apprêt",
   other: "",
 };
-
-function nowDatetimeLocal(): string {
-  const d = new Date();
-  d.setSeconds(0, 0);
-  return d.toISOString().slice(0, 16);
-}
 
 export default function PhaseForm({ batchId, onSaved, onCancel }: Props) {
   const [type, setType] = useState<PhaseType>("primary");

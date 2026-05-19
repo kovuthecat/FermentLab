@@ -1,5 +1,18 @@
 import type { IngredientType, IngredientUnit, IngredientRole } from "../batches/types";
 
+export const DEFAULT_INGREDIENT_UNITS: Record<IngredientType, IngredientUnit> = {
+  water: "ml",
+  sugar: "g",
+  tea: "g",
+  milk: "ml",
+  flour: "g",
+  starter: "g",
+  fruit: "g",
+  flavoring: "g",
+  salt: "g",
+  other: "g",
+};
+
 export const INGREDIENT_TYPE_LABELS: Record<IngredientType, string> = {
   water: "Eau",
   sugar: "Sucre",

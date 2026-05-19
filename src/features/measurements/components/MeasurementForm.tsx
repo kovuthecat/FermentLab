@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { MeasurementMetric, MeasurementUnit } from "../types";
 import { measurementRepository } from "../services/measurementRepository";
+import { nowDatetimeLocal } from "../../../shared/utils/date";
 
 interface Props {
   batchId: string;
@@ -41,12 +42,6 @@ const UNIT_LABELS: Record<MeasurementUnit, string> = {
   percent: "%",
   humidity_percent: "%",
 };
-
-function nowDatetimeLocal(): string {
-  const d = new Date();
-  d.setSeconds(0, 0);
-  return d.toISOString().slice(0, 16);
-}
 
 export default function MeasurementForm({ batchId, onSaved, onCancel }: Props) {
   const [timestamp, setTimestamp] = useState(nowDatetimeLocal);

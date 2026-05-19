@@ -1,7 +1,7 @@
 # PROJECT_MAP.md
 
 > Carte synthétique du projet FermentLab. À maintenir à chaque changement d'arborescence.
-> Dernière mise à jour : 2026-05-19 (ingrédients structurés — Étape 11)
+> Dernière mise à jour : 2026-05-19 (consolidation — Étape 12)
 
 ## Vue d'ensemble
 
@@ -23,20 +23,21 @@ FermentLab/
       routes.tsx            ← définition des routes React Router
 
     db/
-      database.ts           ← instance Dexie + schéma v1 (toutes les tables)
+      database.ts           ← instance Dexie + schéma v1→v2 (v2 : suppression derivedMetrics)
 
     features/
       batches/
         pages/
           DashboardPage.tsx     ← liste batchs actifs + terminés (useLiveQuery)
-          CreateBatchPage.tsx   ← formulaire minimal de création batch
+          CreateBatchPage.tsx   ← formulaire création batch (profil, culture, ingrédients pré-remplis)
           BatchDetailPage.tsx   ← écran central : résumé + QuickAddPanel + BatchTimeline
         services/
-          batchRepository.ts    ← close (status/endedAt) + remove (cascade)
+          batchRepository.ts    ← close (status/endedAt) + remove (cascade, sans derivedMetrics)
         hooks/                  ← (vide, À CRÉER si besoin)
         components/
           BatchMetricsSummary.tsx ← résumé des métriques calculées (durée, pH, ABV, ratio…)
-        types.ts              ← Batch, ContainerInfo, CultureSnapshot, IngredientEntry, InitialParameters
+        types.ts              ← Batch, ContainerInfo, CultureSnapshot, IngredientEntry, InitialParameters (sans ingredients[])
+        constants.ts          ← CULTURE_TYPE_LABELS
 
       phases/
         types.ts              ← Phase, PhaseType
@@ -59,6 +60,7 @@ FermentLab/
 
       observations/
         types.ts              ← StructuredObservation, ObservationCategory, OBSERVATION_DESCRIPTORS
+        constants.ts          ← DESCRIPTOR_LABELS, descriptorLabel()
         services/
           observationRepository.ts  ← add / listByBatch / remove
         hooks/
@@ -85,7 +87,7 @@ FermentLab/
           FinalEvaluationDisplay.tsx    ← affichage évaluation finale + bouton modifier
 
       ingredients/
-        constants.ts          ← INGREDIENT_TYPE_LABELS, INGREDIENT_UNIT_LABELS, INGREDIENT_ROLE_LABELS
+        constants.ts          ← INGREDIENT_TYPE_LABELS, INGREDIENT_UNIT_LABELS, INGREDIENT_ROLE_LABELS, DEFAULT_INGREDIENT_UNITS
         services/
           ingredientRepository.ts  ← add / listByBatch / remove
         hooks/
@@ -116,19 +118,18 @@ FermentLab/
 
     timeline/
       components/
-        BatchTimeline.tsx     ← fusion chronologique mesures + observations + événements
+        BatchTimeline.tsx     ← fusion chronologique mesures + observations + événements + suppression
 
     shared/
       types/
-        common.ts             ← FinalEvaluation, DerivedMetric
+        common.ts             ← FinalEvaluation
+      utils/
+        date.ts               ← nowDatetimeLocal() (heure locale pour inputs datetime-local)
       components/             ← (vide, composants vraiment partagés uniquement)
       hooks/
-      utils/
 
     lib/
       calculations.ts         ← calculs purs : durée batch/phase, température, pH, densité, ABV, ratio contenant, culture
-      dates.ts                ← (À CRÉER) formatage ISO, durée relative
-      units.ts                ← (À CRÉER) libellés des unités de mesure
 
     main.tsx                  ← point d'entrée, RouterProvider
     index.css                 ← CSS global mobile-first minimal
@@ -276,9 +277,9 @@ Voir `architecture.md` section 7 pour le format cible.
 
 ### db/database.ts
 
-Tables IndexedDB définies : `batches`, `phases`, `ingredients`, `measurements`, `observations`, `processEvents`, `finalEvaluations`, `derivedMetrics`.
+Tables IndexedDB actives (v2) : `batches`, `phases`, `ingredients`, `measurements`, `observations`, `processEvents`, `finalEvaluations`.
 
-Schéma v1. Incrémenter via `db.version(2).stores(...)` pour toute modification.
+Schéma v2. La table `derivedMetrics` a été supprimée en v2 (jamais utilisée). Incrémenter via `db.version(3).stores(...)` pour toute prochaine modification.
 
 ### lib/calculations.ts
 
@@ -298,7 +299,7 @@ Ne jamais écrire ces valeurs dans `measurements`.
 
 ### shared/types/common.ts
 
-Contient `FinalEvaluation` et `DerivedMetric`, partagés entre features.
+Contient `FinalEvaluation`. `DerivedMetric` supprimé en Étape 12.
 
 ---
 
@@ -313,7 +314,7 @@ Contient `FinalEvaluation` et `DerivedMetric`, partagés entre features.
 | Notes libres comme données | Données non filtrables | UI favorise les champs structurés |
 | Comparaison multi-entités | Agrégation complexe | Commencer par tableau simple |
 | Photos | Stockage local lourd | Reporté v1 |
-| DESCRIPTOR_LABELS | Dupliqué dans ObservationForm + BatchTimeline | Extraire si 3e utilisation |
+| DESCRIPTOR_LABELS | ~~Dupliqué dans ObservationForm + BatchTimeline~~ | ✓ Extrait dans `observations/constants.ts` |
 
 ---
 

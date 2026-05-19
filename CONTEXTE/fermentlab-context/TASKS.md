@@ -15,6 +15,20 @@
 
 Aucune.
 
+## Fait (récent — Étape 12 — Consolidation)
+
+- [x] Source unique ingrédients : suppression de `InitialParameters.ingredients`, exportService simplifié.
+- [x] Dexie v2 : suppression table `derivedMetrics`, type `DerivedMetric` retiré.
+- [x] `shared/utils/date.ts` : `nowDatetimeLocal()` centralisé (corrige bug UTC), remplace 5 copies locales.
+- [x] `observations/constants.ts` : `DESCRIPTOR_LABELS` + `descriptorLabel()` centralisés.
+- [x] `batches/constants.ts` : `CULTURE_TYPE_LABELS` centralisé.
+- [x] `ingredients/constants.ts` : `DEFAULT_INGREDIENT_UNITS` ajouté.
+- [x] `IngredientForm` : pré-remplissage automatique de l'unité au changement de type.
+- [x] Ingrédients kombucha : defaults corrigés (eau, thé en g, sucre, SCOBY en unit, liquide starter en ml).
+- [x] `BatchTimeline` : bouton ✕ sur chaque entrée pour suppression (confirmation native).
+- [x] Docs : DECISIONS.md, DATA_MODEL.md, STATUS.md, TASKS.md, PROJECT_MAP.md mis à jour.
+- [x] Build ✓ Lint ✓
+
 ## Fait (récent — Étape 11)
 
 - [x] ingredientRepository : add / listByBatch / remove.
@@ -90,5 +104,6 @@ Aucun.
 
 ## Dette technique
 
-- `lib/dates.ts` : formatage des dates est inline dans les pages (à extraire quand utilisé dans 2+ endroits).
-- `DESCRIPTOR_LABELS` dupliqué entre ObservationForm et BatchTimeline (à extraire dans `observations/types.ts` ou `observations/utils.ts` si une 3e utilisation apparaît).
+- `lib/dates.ts` : formatage d'affichage des dates (formatDate, formatDateShort) est encore inline dans plusieurs composants. À extraire si un 3e composant en a besoin.
+- Phases absentes de la timeline : `phaseId` jamais assigné dans les formulaires de saisie.
+- Suppression d'entités depuis la timeline : implémentée. Édition (correction de valeur) reste à faire.
