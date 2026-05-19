@@ -251,3 +251,36 @@ Le snapshot est simple, exploitable et migrable plus tard vers une vraie entité
 - Impact sur le coût de maintenance IA : favorable.
 - Impact sur la quantité de contexte nécessaire : faible.
 - Impact sur `PROJECT_MAP.md` : documenter `cultureSnapshot` dans batches.
+
+---
+
+## 2026-05-19 — Calculs métier isolés dans lib/calculations.ts, non persistés
+
+### Décision
+
+Les calculs dérivés (durée, ABV estimé, ratio contenant, stats température/pH) sont implémentés comme fonctions pures dans `src/lib/calculations.ts`. Leurs résultats ne sont jamais écrits en base (ni dans `measurements`, ni dans `derivedMetrics`).
+
+### Contexte
+
+Les données de base (phases, mesures) suffisent à calculer les indicateurs à la volée. Persister les résultats calculés créerait un risque de désynchronisation avec les données brutes.
+
+### Alternatives envisagées
+
+- Persister les résultats dans la table `derivedMetrics` pour les réutiliser.
+- Calculer directement dans les composants React.
+
+### Raison du choix
+
+Les calculs sont suffisamment rapides pour être effectués à chaque rendu. Les fonctions pures sont testables et réutilisables. La table `derivedMetrics` reste disponible pour un usage futur (export JSON enrichi, comparaison batchs).
+
+### Conséquences
+
+- `estimateAbvFromDensity` retourne `null` si OG ou FG manque, ou si OG ≤ FG (incohérence).
+- L'ABV est affiché comme estimation uniquement.
+- `getPhaseDurationByType` utilise la date actuelle si la phase est active.
+- `derivedMetrics` n'est pas utilisé pour l'instant.
+
+### Impact IA
+
+- Impact sur la complexité : faible.
+- Impact sur la maintenance IA : très favorable — pas d'état caché en base.

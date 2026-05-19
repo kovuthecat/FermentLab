@@ -1,7 +1,7 @@
 # PROJECT_MAP.md
 
 > Carte synthétique du projet FermentLab. À maintenir à chaque changement d'arborescence.
-> Dernière mise à jour : 2026-05-19
+> Dernière mise à jour : 2026-05-19 (calculs métier)
 
 ## Vue d'ensemble
 
@@ -32,9 +32,10 @@ FermentLab/
           CreateBatchPage.tsx   ← formulaire minimal de création batch
           BatchDetailPage.tsx   ← écran central : résumé + QuickAddPanel + BatchTimeline
         services/
-          batchRepository.ts    ← (À CRÉER) CRUD Dexie pour batchs
+          batchRepository.ts    ← CRUD Dexie pour batchs
         hooks/                  ← (vide, À CRÉER si besoin)
-        components/             ← (vide, À CRÉER)
+        components/
+          BatchMetricsSummary.tsx ← résumé des métriques calculées (durée, pH, ABV, ratio…)
         types.ts              ← Batch, ContainerInfo, CultureSnapshot, IngredientEntry, InitialParameters
 
       phases/
@@ -101,7 +102,7 @@ FermentLab/
       utils/
 
     lib/
-      calculations.ts         ← (À CRÉER) durée totale, F1/F2, ratio surface/profondeur, ABV
+      calculations.ts         ← calculs purs : durée batch/phase, température, pH, densité, ABV, ratio contenant, culture
       dates.ts                ← (À CRÉER) formatage ISO, durée relative
       units.ts                ← (À CRÉER) libellés des unités de mesure
 
@@ -249,13 +250,19 @@ Tables IndexedDB définies : `batches`, `phases`, `ingredients`, `measurements`,
 
 Schéma v1. Incrémenter via `db.version(2).stores(...)` pour toute modification.
 
-### lib/calculations.ts (À CRÉER)
+### lib/calculations.ts
 
-Calculs produits à partir des données Dexie :
-- durée totale du batch (endedAt - startedAt)
-- durée F1 / F2 / réfrigération (par phases)
-- ratio surface/profondeur (contenant)
-- estimation ABV (si OG/FG disponibles)
+Calculs purs, aucune écriture en base.
+
+- `getBatchDurationHours(batch)` — durée totale (endedAt ou now)
+- `getPhaseDurationHours(phase)` — durée d'une phase (endedAt ou now)
+- `getPhaseDurationByType(phases, type)` — cumul durée pour un type de phase
+- `getTemperatureStats(measurements)` — moyenne / min / max sur temperature + ambient_temperature
+- `getPhStats(measurements)` — pH initial / final / delta (trié timestamp)
+- `getDensityStats(measurements)` — OG / FG (trié timestamp)
+- `estimateAbvFromDensity(measurements)` — (OG - FG) × 131,25
+- `getSurfaceDepthRatio(batch)` — surfaceAreaCm2 / depthCm
+- `getCultureRefrigerationHours(batch)` — refrigerationDurationHours du snapshot
 
 Ne jamais écrire ces valeurs dans `measurements`.
 

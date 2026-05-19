@@ -17,6 +17,12 @@ Aucune.
 
 ## Fait (récent)
 
+- [x] lib/calculations.ts : 9 fonctions de calcul pur (durée, température, pH, densité, ABV, ratio contenant, culture).
+- [x] BatchMetricsSummary : composant affichant les métriques calculées sur la page détail batch.
+- [x] BatchDetailPage : section "Résumé calculé" intégrée.
+
+## Fait (récent)
+
 ## À faire
 
 - [x] PhaseManager : démarrer / finir une phase selon le profil, depuis BatchDetailPage.
@@ -25,7 +31,7 @@ Aucune.
 - [ ] ComparisonPage : tableau filtrable des batchs terminés.
 - [ ] Export JSON versionné (schemaVersion 1.0), depuis BatchDetailPage.
 - [ ] lib/dates.ts : utilitaires de formatage de dates.
-- [ ] lib/calculations.ts : durée totale, F1/F2, ratio surface/profondeur, ABV.
+- [x] lib/calculations.ts : durée totale, F1/F2, ratio surface/profondeur, ABV, pH, température, culture.
 - [ ] Validation manuelle Desktop + Mobile.
 
 ## Fait

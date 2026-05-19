@@ -1,6 +1,6 @@
 # STATUS.md
 
-> Dernière mise à jour : 2026-05-19
+> Dernière mise à jour : 2026-05-19 (calculs métier)
 
 ## Phase actuelle
 
@@ -33,7 +33,20 @@ Phase MVP — gestion des phases implémentée et séparation métier Phase/Proc
 - 4 profils de fermentation MVP : water_kefir, milk_kefir, kombucha, sourdough_starter.
 - Profil suggère automatiquement le type de culture dans le formulaire.
 - TypeScript compile sans erreur.
-- Build production réussi (416 KB JS, 7.69 KB CSS).
+- Build production réussi (420 KB JS, 7.93 KB CSS).
+- **Calculs métier** (`src/lib/calculations.ts`) :
+  - `getBatchDurationHours` : durée totale du batch (batch actif → date actuelle).
+  - `getPhaseDurationHours` : durée d'une phase (phase active → date actuelle).
+  - `getPhaseDurationByType` : durée cumulée par type de phase (primary, secondary, refrigeration…).
+  - `getTemperatureStats` : moyenne / min / max sur `temperature` + `ambient_temperature`.
+  - `getPhStats` : pH initial / final / delta (trié par timestamp).
+  - `getDensityStats` : OG / FG (trié par timestamp).
+  - `estimateAbvFromDensity` : estimation ABV = (OG - FG) × 131,25.
+  - `getSurfaceDepthRatio` : surfaceAreaCm2 / depthCm.
+  - `getCultureRefrigerationHours` : refrigerationDurationHours du snapshot.
+  - Tous les calculs sont purs, aucun résultat n'est persisté en base.
+- **BatchMetricsSummary** (`src/features/batches/components/`) : section "Résumé calculé" sur la page détail, n'affiche que les valeurs disponibles.
+- **BatchDetailPage** : section "Résumé calculé" ajoutée avant "Suivi".
 - **Séparation Phase / ProcessEvent** :
   - `ProcessEventType` réduit aux actions ponctuelles : `bottling`, `filtering`, `ingredient_added`, `burping`, `mixing`, `discard`, `feeding`, `container_changed`, `other`.
   - Types de phase retirés de `ProcessEventType` : `start_phase`, `end_phase`, `end_primary_fermentation`, `start_secondary_fermentation`, `end_secondary_fermentation`, `refrigeration`.
@@ -49,7 +62,7 @@ Phase MVP — gestion des phases implémentée et séparation métier Phase/Proc
 - Clôture batch (FinalEvaluation + passage status → completed).
 - Comparaison des batchs (ComparisonPage).
 - Export JSON versionné.
-- `lib/dates.ts` et `lib/calculations.ts`.
+- `lib/dates.ts`.
 - Graphes de mesures.
 - Photos.
 

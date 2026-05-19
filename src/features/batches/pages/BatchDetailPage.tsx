@@ -13,6 +13,7 @@ import ProcessEventForm from "../../events/components/ProcessEventForm";
 import BatchTimeline from "../../timeline/components/BatchTimeline";
 import { usePhases } from "../../phases/hooks/usePhases";
 import PhaseList from "../../phases/components/PhaseList";
+import BatchMetricsSummary from "../components/BatchMetricsSummary";
 import { batchRepository } from "../services/batchRepository";
 
 type ActiveForm = "measurement" | "observation" | "event" | null;
@@ -197,6 +198,15 @@ export default function BatchDetailPage() {
       <section>
         <h2>Phases</h2>
         <PhaseList batchId={batch.id} profileId={batch.profileId} phases={phases ?? []} />
+      </section>
+
+      <section>
+        <h2>Résumé calculé</h2>
+        <BatchMetricsSummary
+          batch={batch}
+          phases={phases ?? []}
+          measurements={measurements ?? []}
+        />
       </section>
 
       <section>
