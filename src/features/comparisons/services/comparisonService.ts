@@ -1,4 +1,4 @@
-import { db } from "../../../db/database";
+import { batchRepository } from "../../batches/services/batchRepository";
 import { phaseRepository } from "../../phases/services/phaseRepository";
 import { measurementRepository } from "../../measurements/services/measurementRepository";
 import { finalEvaluationRepository } from "../../evaluations/services/finalEvaluationRepository";
@@ -43,10 +43,10 @@ export type BatchComparisonRow = {
 
 export const comparisonService = {
   async getComparisonRows(): Promise<BatchComparisonRow[]> {
-    const batches = await db.batches
-      .where("status")
-      .anyOf(["completed", "abandoned"])
-      .sortBy("startedAt");
+    const allBatches = await batchRepository.list();
+    const batches = allBatches
+      .filter((b) => b.status === "completed" || b.status === "abandoned")
+      .sort((a, b) => a.startedAt.localeCompare(b.startedAt));
 
     const rows: BatchComparisonRow[] = [];
 

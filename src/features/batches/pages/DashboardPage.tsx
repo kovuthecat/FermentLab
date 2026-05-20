@@ -1,6 +1,7 @@
-import { useLiveQuery } from "dexie-react-hooks";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { db } from "../../../db/database";
+import { batchRepository } from "../services/batchRepository";
+import { useDataVersion } from "../../../lib/refresh";
 import { getProfile } from "../../profiles/data/profiles";
 import type { Batch, BatchStatus } from "../types";
 
@@ -45,20 +46,16 @@ function BatchCard({ batch }: { batch: Batch }) {
 }
 
 export default function DashboardPage() {
-  const activeBatches = useLiveQuery(
-    () => db.batches.where("status").equals("active").reverse().sortBy("startedAt"),
-    []
-  );
+  const v = useDataVersion();
+  const [batches, setBatches] = useState<Batch[] | undefined>(undefined);
 
-  const closedBatches = useLiveQuery(
-    () =>
-      db.batches
-        .where("status")
-        .anyOf(["completed", "abandoned"])
-        .reverse()
-        .sortBy("startedAt"),
-    []
-  );
+  useEffect(() => {
+    console.log("[Supabase] loading batches");
+    batchRepository.list().then(setBatches).catch(console.error);
+  }, [v]);
+
+  const activeBatches = batches?.filter((b) => b.status === "active") ?? [];
+  const closedBatches = batches?.filter((b) => b.status !== "active") ?? [];
 
   return (
     <div className="page dashboard">
@@ -71,21 +68,21 @@ export default function DashboardPage() {
 
       <section>
         <h2>En cours</h2>
-        {activeBatches === undefined && <p className="loading">Chargement…</p>}
-        {activeBatches?.length === 0 && (
+        {batches === undefined && <p className="loading">Chargement…</p>}
+        {batches !== undefined && activeBatches.length === 0 && (
           <p className="empty">
             Aucune fermentation active.{" "}
             <Link to="/batches/new">Commencer un batch</Link>.
           </p>
         )}
         <div className="batch-list">
-          {activeBatches?.map((batch) => (
+          {activeBatches.map((batch) => (
             <BatchCard key={batch.id} batch={batch} />
           ))}
         </div>
       </section>
 
-      {closedBatches && closedBatches.length > 0 && (
+      {closedBatches.length > 0 && (
         <section>
           <h2>Terminés / Abandonnés</h2>
           <div className="batch-list">

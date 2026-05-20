@@ -332,6 +332,30 @@ Supprimer la dualité évite toute confusion sur la source de vérité. L'export
 
 ---
 
+## 2026-05-20 — Migration complète vers Supabase comme source de vérité (Étape 16)
+
+### Décision
+
+Tous les repositories et hooks utilisent Supabase. Dexie est conservé mais inactif.
+
+### Pattern de réactivité post-mutation
+
+`triggerRefresh()` (dans `src/lib/refresh.ts`) est appelé à la fin de chaque mutation dans les repositories. Les hooks React utilisent `useDataVersion()` (abonné au même signal) comme dépendance de `useEffect`, ce qui déclenche un re-fetch automatique sans abonnement Supabase Realtime.
+
+### Mapping snake_case ↔ camelCase
+
+Les colonnes Supabase (snake_case) sont mappées vers les types TypeScript (camelCase) via des fonctions `rowToXxx` dans chaque repository. Pas de transformation globale.
+
+### user_id
+
+Obtenu via `getCurrentUserId()` (`supabase.auth.getUser()`) dans chaque write operation. RLS filtre automatiquement en lecture.
+
+### Dexie conservé
+
+`db/database.ts` et `dexie-react-hooks` restent dans les dépendances pour rollback possible. Ne plus importer `db` dans les nouvelles fonctionnalités.
+
+---
+
 ## 2026-05-19 — Ajout Supabase Auth OTP + préparation Vercel (Étape 15)
 
 ### Décision

@@ -1,6 +1,6 @@
-import { useState } from "react";
-import { useLiveQuery } from "dexie-react-hooks";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { useDataVersion } from "../../../lib/refresh";
 import { comparisonService } from "../services/comparisonService";
 import type { BatchComparisonRow } from "../services/comparisonService";
 import ComparisonFilters from "../components/ComparisonFilters";
@@ -85,8 +85,12 @@ export default function ComparisonPage() {
   const [sortKey, setSortKey] = useState<SortKey>("overallScore");
   const [sortDir, setSortDir] = useState<SortDir>("desc");
   const [exporting, setExporting] = useState(false);
+  const [allRows, setAllRows] = useState<BatchComparisonRow[] | undefined>(undefined);
+  const v = useDataVersion();
 
-  const allRows = useLiveQuery(() => comparisonService.getComparisonRows(), []);
+  useEffect(() => {
+    comparisonService.getComparisonRows().then(setAllRows).catch(console.error);
+  }, [v]);
 
   function handleSort(key: SortKey) {
     if (sortKey === key) {

@@ -1,10 +1,11 @@
-import { db } from "../../../db/database";
-import type { Batch } from "../../batches/types";
+import { batchRepository } from "../../batches/services/batchRepository";
+import { ingredientRepository } from "../../ingredients/services/ingredientRepository";
 import { phaseRepository } from "../../phases/services/phaseRepository";
 import { measurementRepository } from "../../measurements/services/measurementRepository";
 import { observationRepository } from "../../observations/services/observationRepository";
 import { processEventRepository } from "../../events/services/processEventRepository";
 import { finalEvaluationRepository } from "../../evaluations/services/finalEvaluationRepository";
+import type { Batch } from "../../batches/types";
 import {
   getBatchDurationHours,
   getPhaseDurationByType,
@@ -31,10 +32,9 @@ async function buildBatchEntry(batch: Batch): Promise<BatchExportEntry> {
       observationRepository.listByBatch(batch.id),
       processEventRepository.listByBatch(batch.id),
       finalEvaluationRepository.getByBatch(batch.id),
-      db.ingredients.where("batchId").equals(batch.id).toArray(),
+      ingredientRepository.listByBatch(batch.id),
     ]);
 
-  // Calculated summary — pure functions, never persisted
   const tempStats = getTemperatureStats(measurements);
   const phStats = getPhStats(measurements);
   const densityStats = getDensityStats(measurements);
@@ -95,7 +95,7 @@ async function buildBatchEntry(batch: Batch): Promise<BatchExportEntry> {
 
 export const exportService = {
   async exportBatch(batchId: string): Promise<SingleBatchExport> {
-    const batch = await db.batches.get(batchId);
+    const batch = await batchRepository.get(batchId);
     if (!batch) throw new Error(`Batch introuvable : ${batchId}`);
     const entry = await buildBatchEntry(batch);
     return {
@@ -116,8 +116,9 @@ export const exportService = {
   },
 
   async exportAllBatches(): Promise<AllBatchesExport> {
-    const batches = await db.batches.orderBy("startedAt").toArray();
-    const batchEntries = await Promise.all(batches.map(buildBatchEntry));
+    const batches = await batchRepository.list();
+    const sorted = [...batches].sort((a, b) => a.startedAt.localeCompare(b.startedAt));
+    const batchEntries = await Promise.all(sorted.map(buildBatchEntry));
     return {
       schemaVersion: "1.0",
       exportedAt: new Date().toISOString(),

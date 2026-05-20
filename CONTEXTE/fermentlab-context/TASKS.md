@@ -15,6 +15,27 @@
 
 Aucune.
 
+## Fait (récent — Étape 16 — Migration Supabase source de vérité)
+
+- [x] `src/lib/refresh.ts` : `triggerRefresh()` + `useDataVersion()` (pub-sub pour réactivité post-mutation).
+- [x] `src/lib/getCurrentUserId.ts` : helper `supabase.auth.getUser()`.
+- [x] `batchRepository` : `create`, `get`, `list`, `close`, `remove` → Supabase + `triggerRefresh`.
+- [x] `phaseRepository` : `add`, `listByBatch`, `findActiveByType`, `findActiveByBatch`, `close`, `remove` → Supabase.
+- [x] `ingredientRepository` : `add`, `bulkAdd`, `listByBatch`, `remove` → Supabase.
+- [x] `measurementRepository` : `add`, `listByBatch`, `update`, `remove` → Supabase.
+- [x] `observationRepository` : `add`, `listByBatch`, `update`, `remove` → Supabase.
+- [x] `processEventRepository` : `add`, `listByBatch`, `update`, `remove` → Supabase.
+- [x] `finalEvaluationRepository` : `save` (insert/update), `getByBatch` → Supabase.
+- [x] `useBatch` (nouveau hook) : charge batch depuis Supabase via `useDataVersion`.
+- [x] 6 hooks (`usePhases`, `useMeasurements`, `useObservations`, `useProcessEvents`, `useIngredients`, `useFinalEvaluation`) : `useLiveQuery` → `useState + useEffect + useDataVersion`.
+- [x] `DashboardPage` : `useLiveQuery` → `useState + useEffect + batchRepository.list`.
+- [x] `CreateBatchPage` : `db.batches.add` / `db.ingredients.bulkAdd` → `batchRepository.create` / `ingredientRepository.bulkAdd`.
+- [x] `BatchDetailPage` : `useLiveQuery(db.batches.get)` → `useBatch`.
+- [x] `ComparisonPage` : `useLiveQuery` → `useState + useEffect + useDataVersion`.
+- [x] `comparisonService` : `db.batches` → `batchRepository.list`.
+- [x] `exportService` : `db.batches.get/orderBy` + `db.ingredients` → repositories Supabase.
+- [x] Build ✓ (573 KB). Lint ✓.
+
 ## Fait (récent — Étape 15 — Déploiement Vercel + Supabase OTP)
 
 - [x] `vercel.json` : rewrite `/(.*) → /index.html` (routing SPA en production).

@@ -1,15 +1,15 @@
 # PROJECT_MAP.md
 
 > Carte synthétique du projet FermentLab. À maintenir à chaque changement d'arborescence.
-> Dernière mise à jour : 2026-05-19 (UX timeline — Étape 14)
+> Dernière mise à jour : 2026-05-20 (Migration Supabase — Étape 16)
 
 ## Vue d'ensemble
 
-Application React/Vite/TypeScript local-first pour suivre des fermentations personnelles sous forme de batchs expérimentaux.
+Application React/Vite/TypeScript avec persistance Supabase (Postgres + Auth OTP email) pour suivre des fermentations personnelles sous forme de batchs expérimentaux.
 
 Flux principal : créer un batch → saisir paramètres initiaux → suivre phases / mesures / observations / événements → clôturer → comparer les résultats → exporter JSON.
 
-Stack : React 19, Vite 8, TypeScript, React Router 7, Dexie 4, dexie-react-hooks.
+Stack : React 19, Vite 8, TypeScript, React Router 7, Supabase JS SDK, Dexie (conservé, inactif).
 
 ---
 
@@ -22,18 +22,31 @@ FermentLab/
       App.tsx               ← shell applicatif, header, <Outlet>
       routes.tsx            ← définition des routes React Router
 
+    lib/
+      supabaseClient.ts     ← client Supabase (VITE_SUPABASE_URL + VITE_SUPABASE_ANON_KEY)
+      getCurrentUserId.ts   ← helper auth.getUser()
+      refresh.ts            ← pub-sub triggerRefresh() + useDataVersion() pour réactivité post-mutation
+
     db/
-      database.ts           ← instance Dexie + schéma v1→v2 (v2 : suppression derivedMetrics)
+      database.ts           ← instance Dexie conservée (inactif, rollback possible)
 
     features/
+      auth/
+        authContext.ts        ← AuthContext + AuthContextValue
+        AuthProvider.tsx      ← session Supabase via onAuthStateChange
+        useAuth.ts            ← hook useAuth()
+        AuthPage.tsx          ← flux OTP email (email → code 8 caractères)
+        ProtectedRoute.tsx    ← redirect /auth si pas de session
+
       batches/
         pages/
-          DashboardPage.tsx     ← liste batchs actifs + terminés (useLiveQuery)
-          CreateBatchPage.tsx   ← formulaire création batch (profil, culture, ingrédients pré-remplis)
-          BatchDetailPage.tsx   ← écran central : résumé + QuickAddPanel + BatchTimeline
+          DashboardPage.tsx     ← liste batchs depuis Supabase (useState + useEffect + useDataVersion)
+          CreateBatchPage.tsx   ← création batch via batchRepository.create + ingredientRepository.bulkAdd
+          BatchDetailPage.tsx   ← écran central : useBatch + tous les hooks Supabase
         services/
-          batchRepository.ts    ← close (status/endedAt) + remove (cascade, sans derivedMetrics)
-        hooks/                  ← (vide, À CRÉER si besoin)
+          batchRepository.ts    ← create, get, list, close, remove → Supabase
+        hooks/
+          useBatch.ts           ← charge un batch depuis Supabase (useDataVersion)
         components/
           BatchMetricsSummary.tsx ← résumé des métriques calculées (durée, pH, ABV, ratio…)
         types.ts              ← Batch, ContainerInfo, CultureSnapshot, IngredientEntry, InitialParameters (sans ingredients[])

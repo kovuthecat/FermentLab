@@ -1,7 +1,6 @@
 import { useState } from "react";
-import { useLiveQuery } from "dexie-react-hooks";
 import { useParams, Link, useNavigate } from "react-router-dom";
-import { db } from "../../../db/database";
+import { useBatch } from "../hooks/useBatch";
 import { getProfile } from "../../profiles/data/profiles";
 import type { BatchStatus, CultureSnapshot } from "../types";
 import { CULTURE_TYPE_LABELS } from "../constants";
@@ -156,11 +155,7 @@ export default function BatchDetailPage() {
     setTimeout(() => setSavedFeedback(null), 2500);
   }
 
-  const batch = useLiveQuery(
-    () => (batchId ? db.batches.get(batchId) : undefined),
-    [batchId]
-  );
-
+  const batch = useBatch(batchId);
   const finalEvaluation = useFinalEvaluation(batchId ?? "");
   const measurements = useMeasurements(batchId ?? "");
   const observations = useObservations(batchId ?? "");
@@ -368,7 +363,7 @@ export default function BatchDetailPage() {
           <BatchCloseForm
             batchId={batch.id}
             batchCurrentStatus={batch.status}
-            existingEvaluation={finalEvaluation}
+            existingEvaluation={finalEvaluation ?? undefined}
             onDone={() => setShowCloseForm(false)}
             onCancel={() => setShowCloseForm(false)}
           />

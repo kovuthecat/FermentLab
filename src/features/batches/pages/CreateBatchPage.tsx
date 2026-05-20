@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { db } from "../../../db/database";
+import { batchRepository } from "../services/batchRepository";
+import { ingredientRepository } from "../../ingredients/services/ingredientRepository";
 import { FERMENTATION_PROFILES } from "../../profiles/data/profiles";
 import type {
   Batch,
@@ -165,7 +166,8 @@ export default function CreateBatchPage() {
     };
 
     try {
-      await db.batches.add(batch);
+      console.log("[Supabase] creating batch", batch.id);
+      await batchRepository.create(batch);
 
       const ingredientEntries: IngredientEntry[] = ingredients
         .filter((d) => d.name.trim() && d.quantity)
@@ -180,7 +182,7 @@ export default function CreateBatchPage() {
         }));
 
       if (ingredientEntries.length > 0) {
-        await db.ingredients.bulkAdd(ingredientEntries);
+        await ingredientRepository.bulkAdd(ingredientEntries);
       }
 
       navigate(`/batches/${batch.id}`);

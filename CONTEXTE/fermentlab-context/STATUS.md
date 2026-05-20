@@ -129,6 +129,18 @@ Phase déploiement — préparation Vercel + Supabase Auth OTP (Étape 15).
   - Build production : 449 KB JS. Lint sans erreur.
 - Build production (Étape 14) : 459 KB JS, 16.20 KB CSS. Lint sans erreur.
 
+- **Migration Supabase — source de vérité** (Étape 16) :
+  - 7 repositories migrés vers Supabase (batches, phases, ingredients, measurements, observations, process_events, final_evaluations).
+  - 7 hooks migrés : `useLiveQuery` → `useState + useEffect + useDataVersion`.
+  - `useBatch(batchId)` nouveau hook pour charger un batch depuis Supabase.
+  - `DashboardPage`, `CreateBatchPage`, `BatchDetailPage`, `ComparisonPage` : plus aucune référence à Dexie.
+  - `comparisonService`, `exportService` : utilisent les repositories Supabase.
+  - `src/lib/refresh.ts` : pub-sub `triggerRefresh()` / `useDataVersion()` — après chaque mutation, tous les hooks React re-fetchen automatiquement.
+  - `src/lib/getCurrentUserId.ts` : helper auth pour obtenir le user_id lors des inserts.
+  - Logs `[Supabase]` ajoutés sur les opérations principales.
+  - Dexie conservé (`db/database.ts`) mais inactif — rollback possible.
+  - Build ✓ (573 KB, -90 KB vs avant). Lint ✓.
+
 - **Déploiement Vercel + Supabase OTP** (Étape 15) :
   - `vercel.json` : rewrite SPA → `/index.html`.
   - `.env.example` : `VITE_SUPABASE_URL` + `VITE_SUPABASE_ANON_KEY`.
