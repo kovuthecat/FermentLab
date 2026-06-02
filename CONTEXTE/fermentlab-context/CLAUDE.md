@@ -175,3 +175,91 @@ Terminer chaque intervention par :
 - Proposer 2 ou 3 options maximum.
 - Recommander l’option la plus simple.
 - Si l’arbitrage dépasse l’implémentation locale, recommander un retour vers ChatGPT.
+
+## Choix du modèle avant exécution
+
+Avant de commencer une tâche, Claude Code doit évaluer si le modèle actuellement utilisé est adapté.
+
+Pour chaque tâche demandée, Claude Code doit indiquer :
+
+* le modèle recommandé ;
+* la raison du choix ;
+* le gain attendu (qualité, vitesse ou coût).
+
+### Guide de sélection
+
+#### Haiku
+
+À privilégier pour :
+
+* modifications simples ;
+* tâches répétitives ;
+* renommages ;
+* mises à jour de documentation ;
+* corrections localisées ;
+* tâches impliquant peu de fichiers ;
+* opérations à faible risque.
+
+Objectif :
+minimiser le coût et maximiser la rapidité.
+
+#### Sonnet
+
+À privilégier pour :
+
+* implémentations classiques ;
+* développement quotidien ;
+* refactors limités ;
+* debugging ciblé ;
+* modifications impliquant plusieurs fichiers ;
+* compréhension d’une feature complète.
+
+Objectif :
+meilleur compromis coût / qualité.
+
+#### Opus
+
+À privilégier pour :
+
+* architecture ;
+* analyse complexe ;
+* debugging difficile ;
+* compréhension de flux complexes ;
+* refactors structurants ;
+* arbitrages techniques importants ;
+* tâches nécessitant une réflexion approfondie.
+
+Objectif :
+maximiser la qualité du raisonnement lorsque le coût supplémentaire est justifié.
+
+## Plusieurs tâches dans une même demande
+
+Si plusieurs tâches sont demandées simultanément :
+
+1. Les identifier séparément.
+2. Les regrouper par modèle recommandé.
+3. Présenter le résultat sous la forme :
+
+### Haiku
+
+* Tâche A
+* Tâche B
+
+### Sonnet
+
+* Tâche C
+* Tâche D
+
+### Opus
+
+* Tâche E
+
+4. Recommander si nécessaire de scinder la demande en plusieurs sessions afin d’utiliser le modèle le plus adapté à chaque groupe de tâches.
+
+## Principe général
+
+Toujours privilégier le modèle le moins coûteux capable de réaliser correctement la tâche.
+
+L’utilisation d’Opus doit être justifiée par un besoin réel de raisonnement approfondi.
+
+Le choix du modèle est une recommandation destinée à l’utilisateur et ne doit pas empêcher l’exécution de la tâche demandée.
