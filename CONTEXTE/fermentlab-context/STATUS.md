@@ -1,5 +1,7 @@
 # STATUS.md
 
+Photo à l'instant T. Frontières : **STATUS** = état actuel · **TASKS** = backlog actif · **ROADMAP** = vision.
+
 > Dernière mise à jour : 2026-05-19 (Déploiement Vercel + Supabase OTP — Étape 15)
 
 ## Phase actuelle
@@ -186,5 +188,5 @@ Phase déploiement — préparation Vercel + Supabase Auth OTP (Étape 15).
 ## Contexte IA
 
 - `PROJECT_MAP.md` est à jour : oui.
-- `scripts/export-context.mjs` fonctionne : à tester.
+- `scripts/export-context.py` fonctionne : à tester.
 - Prochaine zone à documenter : export JSON.

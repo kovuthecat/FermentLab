@@ -1,5 +1,7 @@
 # ROADMAP.md
 
+Vision et jalons (rarement modifié). Le backlog actif vit dans `TASKS.md`, l'état courant dans `STATUS.md`.
+
 ## Vision
 
 Construire une application local-first permettant de documenter proprement des fermentations personnelles et de comparer les résultats batch après batch.

@@ -1,5 +1,7 @@
 # TASKS.md
 
+Backlog actif. Frontières : **TASKS** = actions concrètes · `STATUS.md` = état T · `ROADMAP.md` = vision.
+
 ## Règles
 
 - Une tâche = une intention claire.

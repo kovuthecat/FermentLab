@@ -90,7 +90,7 @@ C'est un journal expérimental de fermentation :
 - Réduire le nombre de fichiers nécessaires par tâche.
 - Conserver un projet lisible rapidement par ChatGPT et Claude Code.
 - Maintenir `PROJECT_MAP.md` pour faciliter l'identification rapide des fichiers pertinents.
-- Utiliser `scripts/export-context.mjs` avant les phases de réflexion ChatGPT si le contexte projet est nécessaire.
+- Utiliser `scripts/export-context.py` avant les phases de réflexion ChatGPT si le contexte projet est nécessaire.
 
 ## Priorités
 

@@ -3,46 +3,58 @@
 ## Règles
 
 - Un commit = une intention claire.
-- Commit avant toute session Claude Code risquée.
-- Relire le diff avant commit.
+- Relire le diff (`git diff`) avant de committer.
+- Stager les fichiers concernés explicitement, pas `git add .` à l'aveugle.
 - Utiliser des branches pour les expérimentations.
-- Ne pas laisser de modifications non documentées.
-- Pousser les changements après chaque session validée.
+- Ne jamais committer de secret (`.env`, clés, tokens) — vérifier le diff.
+- Pousser après chaque session validée.
 
-## Exemples de bons commits
+## Format des messages
+
+Verbe à l'impératif en anglais, court, une intention par commit.
 
 ```bash
-git commit -m "Add recipe tag filtering"
-git commit -m "Fix iPad PWA standalone display"
-git commit -m "Refactor local storage service"
+git commit -m "Add batch comparison filters"
+git commit -m "Fix phase duration calculation"
+git commit -m "Refactor measurement repository"
 git commit -m "Update project context templates"
 ```
 
-## Avant Claude Code
+Préfixe optionnel de type : `feat:`, `fix:`, `refactor:`, `docs:`, `chore:`.
+
+## Avant une session Claude Code risquée
+
+Partir d'un état propre pour pouvoir revenir en arrière facilement.
 
 ```bash
 git status
-git add .
+git diff                       # relire ce qui n'est pas encore committé
+git add <fichiers>             # ou git add -p pour stager par morceaux
 git commit -m "Stable state before AI changes"
 ```
 
-## Après Claude Code
+## Après une session validée
 
 ```bash
 git status
-git add .
+git diff                       # relire avant de stager
+git add <fichiers concernés>
 git commit -m "Describe completed change"
 git push
 ```
 
-## Annuler les changements non désirés
+## Annuler / revenir en arrière
 
 ```bash
-git restore .
+git restore <fichier>          # annule les modifs non stagées d'un fichier
+git restore .                  # annule TOUTES les modifs non stagées (non récupérable)
+git reset --hard HEAD          # ⚠ détruit tout le travail non committé, sans retour
 ```
 
-## Revenir au dernier commit
+> `git restore .` et `git reset --hard` sont destructifs : vérifier `git status`
+> avant, et préférer un commit « stable state » plutôt que de tout jeter.
 
-```bash
-git reset --hard HEAD
-```
+## Co-auteur Claude Code
+
+Claude Code ajoute automatiquement une ligne `Co-Authored-By` à ses commits.
+Rien à faire manuellement.

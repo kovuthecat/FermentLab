@@ -160,10 +160,10 @@ FermentLab/
       TASKS.md
       architecture.md         ← document d'architecture complet
       CLAUDE.md
-      ai-usage.md
+      ai-workflow.md
       git.md
       scripts/
-        export-context.mjs    ← export contexte synthétique pour ChatGPT
+        export-context.py     ← export contexte synthétique pour ChatGPT
       prompts/
         claude-code-investigation.md
 
